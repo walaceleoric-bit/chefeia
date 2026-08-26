@@ -1,0 +1,316 @@
+﻿@model chefeia.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Criar conta";
+}
+
+<style>
+
+    body {
+        background: #f7f2eb;
+    }
+
+    .register-page {
+        min-height: 78vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 40px 20px;
+    }
+
+    .register-card {
+        width: 100%;
+        max-width: 620px;
+
+        padding: 45px;
+
+        box-sizing: border-box;
+
+        background: white;
+
+        border-radius: 25px;
+
+        border: 1px solid #eadfd4;
+
+        box-shadow:
+            0 18px 55px rgba(52,31,18,.09);
+    }
+
+    .register-logo {
+        color: #f5661b;
+        font-weight: 900;
+    }
+
+    .register-card h1 {
+        margin: 12px 0 7px;
+
+        font-family: Georgia, serif;
+        color: #2b170d;
+        font-size: 38px;
+    }
+
+    .register-description {
+        margin: 0 0 28px;
+        color: #786a60;
+    }
+
+    .free-box {
+        display: flex;
+        gap: 13px;
+
+        padding: 15px;
+
+        margin-bottom: 25px;
+
+        border-radius: 13px;
+
+        background: #eff8ed;
+
+        color: #39743a;
+    }
+
+    .register-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+
+        margin-bottom: 17px;
+    }
+
+    .register-field label {
+        color: #2b170d;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .register-field input {
+        padding: 14px 15px;
+
+        border: 1px solid #ddd1c6;
+        border-radius: 10px;
+
+        outline: none;
+
+        font-size: 15px;
+    }
+
+    .register-field input:focus {
+        border-color: #f5661b;
+
+        box-shadow:
+            0 0 0 3px rgba(245,102,27,.10);
+    }
+
+    .register-button {
+        width: 100%;
+
+        margin-top: 7px;
+
+        padding: 15px;
+
+        border: 0;
+        border-radius: 11px;
+
+        background: #f5661b;
+
+        color: white;
+
+        font-weight: 900;
+
+        cursor: pointer;
+    }
+
+    .login-link {
+        margin-top: 23px;
+
+        padding-top: 20px;
+
+        border-top: 1px solid #eee5dd;
+
+        text-align: center;
+
+        color: #786a60;
+    }
+
+    .login-link a {
+        color: #f5661b;
+        text-decoration: none;
+        font-weight: 900;
+    }
+
+    .validation-summary-errors {
+        padding: 12px 15px;
+
+        margin-bottom: 18px;
+
+        border-radius: 10px;
+
+        background: #fff0ee;
+
+        color: #a6382e;
+    }
+
+    .field-validation-error {
+        color: #b43a30;
+        font-size: 12px;
+    }
+
+</style>
+
+
+<div class="register-page">
+
+    <div class="register-card">
+
+        <div class="register-logo">
+            👨‍🍳 CHEFE IA
+        </div>
+
+        <h1>
+            Crie sua conta
+        </h1>
+
+        <p class="register-description">
+            Comece gratuitamente e faça upgrade
+            para Premium quando quiser.
+        </p>
+
+
+        <div class="free-box">
+
+            🌿
+
+            <div>
+
+                <strong>
+                    Plano Gratuito
+                </strong>
+
+                <br />
+
+                Sua nova conta começa automaticamente
+                no plano gratuito.
+
+            </div>
+
+        </div>
+
+
+        <form
+            asp-controller="Conta"
+            asp-action="Cadastro"
+            method="post">
+
+            @Html.AntiForgeryToken()
+
+
+            <div
+                asp-validation-summary="ModelOnly">
+            </div>
+
+
+            <div class="register-field">
+
+                <label asp-for="Name">
+                    Nome
+                </label>
+
+                <input
+                    asp-for="Name"
+                    autocomplete="name"
+                    placeholder="Seu nome" />
+
+                <span
+                    asp-validation-for="Name">
+                </span>
+
+            </div>
+
+
+            <div class="register-field">
+
+                <label asp-for="Email">
+                    E-mail
+                </label>
+
+                <input
+                    asp-for="Email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="voce@email.com" />
+
+                <span
+                    asp-validation-for="Email">
+                </span>
+
+            </div>
+
+
+            <div class="register-field">
+
+                <label asp-for="Password">
+                    Senha
+                </label>
+
+                <input
+                    asp-for="Password"
+                    type="password"
+                    autocomplete="new-password"
+                    placeholder="Crie uma senha" />
+
+                <span
+                    asp-validation-for="Password">
+                </span>
+
+            </div>
+
+
+            <div class="register-field">
+
+                <label asp-for="ConfirmPassword">
+                    Confirmar senha
+                </label>
+
+                <input
+                    asp-for="ConfirmPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    placeholder="Digite novamente" />
+
+                <span
+                    asp-validation-for="ConfirmPassword">
+                </span>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="register-button">
+
+                🌿 Criar minha conta grátis
+
+            </button>
+
+        </form>
+
+
+        <div class="login-link">
+
+            Já possui conta?
+
+            <a
+                asp-controller="Conta"
+                asp-action="Login">
+
+                Entrar
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

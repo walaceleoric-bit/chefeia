@@ -1,0 +1,779 @@
+﻿@model List<chefeia.Models.RecipeHistoryViewModel>
+
+@{
+    ViewData["Title"] = "Meu histórico";
+}
+
+<style>
+
+    body {
+        background: #f5f1eb;
+    }
+
+    .history-page {
+        max-width: 1150px;
+        margin: 40px auto 90px;
+        padding: 0 20px;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 28px;
+    }
+
+    .history-header h1 {
+        margin: 0;
+        color: #2b170d;
+        font-family: Georgia, serif;
+        font-size: 37px;
+    }
+
+    .history-header p {
+        margin: 7px 0 0;
+        color: #786a60;
+    }
+
+    .history-back {
+        text-decoration: none;
+        padding: 11px 16px;
+        border-radius: 10px;
+        background: #2b170d;
+        color: white;
+        font-weight: 800;
+        transition: .2s;
+    }
+
+    .history-back:hover {
+        background: #4b2918;
+        color: white;
+    }
+
+    /* =====================================================
+       RESUMO
+    ===================================================== */
+
+    .history-summary {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .summary-card {
+        padding: 18px 20px;
+        border-radius: 17px;
+        background: white;
+        border: 1px solid #eadfd4;
+        box-shadow:
+            0 8px 25px rgba(50,30,17,.04);
+    }
+
+    .summary-card span {
+        display: block;
+        color: #8b7d73;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .summary-card strong {
+        display: block;
+        margin-top: 4px;
+        color: #2b170d;
+        font-size: 25px;
+    }
+
+    /* =====================================================
+       HISTÓRICO VAZIO
+    ===================================================== */
+
+    .empty-history {
+        padding: 60px 30px;
+        text-align: center;
+        background: white;
+        border-radius: 24px;
+        border: 1px solid #eadfd4;
+        box-shadow:
+            0 10px 35px rgba(50,30,17,.05);
+    }
+
+    .empty-history span {
+        font-size: 55px;
+    }
+
+    .empty-history h2 {
+        margin: 14px 0 8px;
+        color: #2b170d;
+    }
+
+    .empty-history p {
+        color: #786a60;
+        margin-bottom: 22px;
+    }
+
+    .empty-create {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: #f5661b;
+        color: white;
+        text-decoration: none;
+        font-weight: 900;
+    }
+
+    .empty-create:hover {
+        background: #dc5510;
+        color: white;
+    }
+
+    /* =====================================================
+       GRID
+    ===================================================== */
+
+    .history-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(
+                auto-fit,
+                minmax(330px, 1fr)
+            );
+        gap: 22px;
+    }
+
+    /* =====================================================
+       CARD
+    ===================================================== */
+
+    .history-card {
+        display: flex;
+        flex-direction: column;
+        background: white;
+        border: 1px solid #eadfd4;
+        border-radius: 21px;
+        overflow: hidden;
+        box-shadow:
+            0 10px 35px rgba(50,30,17,.05);
+        transition:
+            transform .2s,
+            box-shadow .2s;
+    }
+
+    .history-card:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 15px 40px rgba(50,30,17,.08);
+    }
+
+    .history-card-top {
+        padding: 24px;
+        background:
+            linear-gradient(
+                135deg,
+                #fff7ed,
+                #fff
+            );
+    }
+
+    .history-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-bottom: 12px;
+    }
+
+    .history-badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        background: #fff0e4;
+        color: #d84f09;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .history-card h2 {
+        margin: 0 0 8px;
+        color: #2b170d;
+        font-family: Georgia, serif;
+        font-size: 25px;
+    }
+
+    .history-description {
+        margin: 0;
+        color: #786a60;
+        line-height: 1.55;
+        font-size: 13px;
+    }
+
+    .history-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 16px;
+    }
+
+    .history-meta span {
+        padding: 6px 9px;
+        border-radius: 20px;
+        background: white;
+        border: 1px solid #eadfd4;
+        color: #6f5e53;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* =====================================================
+       CONTEÚDO
+    ===================================================== */
+
+    .history-body {
+        flex: 1;
+        padding: 22px 24px;
+    }
+
+    .history-body h3 {
+        margin: 0 0 12px;
+        color: #2b170d;
+        font-size: 16px;
+    }
+
+    .history-list {
+        margin: 0 0 20px;
+        padding-left: 20px;
+        color: #645249;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .history-list li {
+        margin-bottom: 7px;
+    }
+
+    .history-request {
+        padding: 14px;
+        border-radius: 12px;
+        background: #f8f4ef;
+        color: #79695f;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    /* =====================================================
+       RODAPÉ DO CARD
+    ===================================================== */
+
+    .history-card-footer {
+        border-top: 1px solid #eee5dd;
+        background: #fffdfb;
+    }
+
+    .history-date {
+        padding: 12px 24px 8px;
+        color: #95877d;
+        font-size: 11px;
+    }
+
+    .history-actions {
+        padding: 8px 24px 20px;
+    }
+
+    /* =====================================================
+       BOTÃO DOWNLOAD
+    ===================================================== */
+
+    .download-button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+
+        padding: 11px 15px;
+
+        border-radius: 10px;
+
+        background: #f5661b;
+        color: white;
+
+        text-decoration: none;
+
+        font-size: 13px;
+        font-weight: 900;
+
+        transition:
+            background .2s,
+            transform .2s;
+    }
+
+    .download-button:hover {
+        background: #dc5510;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .download-button:active {
+        transform: translateY(0);
+    }
+
+    /* =====================================================
+       PREMIUM
+    ===================================================== */
+
+    .premium-notice {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        margin-bottom: 25px;
+
+        padding: 15px 18px;
+
+        border-radius: 15px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #fff4e8,
+                #fffaf5
+            );
+
+        border: 1px solid #f3d6bc;
+    }
+
+    .premium-notice-icon {
+        font-size: 25px;
+    }
+
+    .premium-notice strong {
+        display: block;
+        color: #9c4616;
+        font-size: 13px;
+    }
+
+    .premium-notice span {
+        display: block;
+        margin-top: 2px;
+        color: #9a725a;
+        font-size: 11px;
+    }
+
+    /* =====================================================
+       RESPONSIVO
+    ===================================================== */
+
+    @@media(max-width: 750px) {
+
+        .history-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .history-summary {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media(max-width: 500px) {
+
+        .history-page {
+            padding: 0 12px;
+        }
+
+        .history-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .history-card-top,
+        .history-body {
+            padding: 20px;
+        }
+
+        .history-date {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .history-actions {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+    }
+
+</style>
+
+
+<div class="history-page">
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
+    <div class="history-header">
+
+        <div>
+
+            <h1>
+                👑 Meu histórico
+            </h1>
+
+            <p>
+                Suas receitas criadas pelo Chefe IA.
+            </p>
+
+        </div>
+
+
+        <a
+            asp-controller="Home"
+            asp-action="Index"
+            class="history-back">
+
+            ← Voltar ao Chefe IA
+
+        </a>
+
+    </div>
+
+
+    <!-- =====================================================
+         AVISO PREMIUM
+    ====================================================== -->
+
+    <div class="premium-notice">
+
+        <div class="premium-notice-icon">
+            👑
+        </div>
+
+        <div>
+
+            <strong>
+                Benefício Premium ativo
+            </strong>
+
+            <span>
+                Suas receitas são salvas automaticamente
+                e podem ser baixadas quando quiser.
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RESUMO
+    ====================================================== -->
+
+    <div class="history-summary">
+
+        <div class="summary-card">
+
+            <span>
+                Receitas salvas
+            </span>
+
+            <strong>
+                @(Model?.Count ?? 0)
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>
+                Plano
+            </span>
+
+            <strong>
+                👑 Premium
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>
+                Download
+            </span>
+
+            <strong>
+                ✓ Liberado
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEM RECEITAS
+    ====================================================== -->
+
+    @if (
+        Model == null ||
+        Model.Count == 0)
+    {
+        <div class="empty-history">
+
+            <span>
+                👨‍🍳
+            </span>
+
+            <h2>
+                Seu histórico está vazio
+            </h2>
+
+            <p>
+                Crie sua primeira receita com o
+                Chefe IA e ela aparecerá
+                automaticamente aqui.
+            </p>
+
+
+            <a
+                asp-controller="Home"
+                asp-action="Index"
+                class="empty-create">
+
+                ✨ Criar minha primeira receita
+
+            </a>
+
+        </div>
+    }
+    else
+    {
+        <!-- =================================================
+             RECEITAS
+        ================================================== -->
+
+        <div class="history-grid">
+
+            @foreach (var item in Model)
+            {
+                <article class="history-card">
+
+                    <!-- =====================================
+                         CABEÇALHO DA RECEITA
+                    ====================================== -->
+
+                    <div class="history-card-top">
+
+                        <div class="history-badges">
+
+                            @if (
+                                !string.IsNullOrWhiteSpace(
+                                    item.Country))
+                            {
+                                <span class="history-badge">
+                                    🌎 @item.Country
+                                </span>
+                            }
+
+
+                            @if (
+                                !string.IsNullOrWhiteSpace(
+                                    item.Category))
+                            {
+                                <span class="history-badge">
+                                    🍽️ @item.Category
+                                </span>
+                            }
+
+                        </div>
+
+
+                        <h2>
+                            @item.Name
+                        </h2>
+
+
+                        @if (
+                            !string.IsNullOrWhiteSpace(
+                                item.Description))
+                        {
+                            <p class="history-description">
+                                @item.Description
+                            </p>
+                        }
+
+
+                        <div class="history-meta">
+
+                            <span>
+                                ⏱️
+                                @item.PreparationMinutes min
+                            </span>
+
+                            <span>
+                                👥
+                                @item.Servings porções
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =====================================
+                         CONTEÚDO
+                    ====================================== -->
+
+                    <div class="history-body">
+
+                        <h3>
+                            🛒 Ingredientes
+                        </h3>
+
+
+                        @if (
+                            item.Ingredients != null &&
+                            item.Ingredients.Count > 0)
+                        {
+                            <ul class="history-list">
+
+                                @foreach (
+                                    var ingrediente
+                                    in item.Ingredients)
+                                {
+                                    <li>
+                                        @ingrediente
+                                    </li>
+                                }
+
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="history-description">
+                                Nenhum ingrediente registrado.
+                            </p>
+                        }
+
+
+                        <h3>
+                            👨‍🍳 Modo de preparo
+                        </h3>
+
+
+                        @if (
+                            item.Steps != null &&
+                            item.Steps.Count > 0)
+                        {
+                            <ol class="history-list">
+
+                                @foreach (
+                                    var passo
+                                    in item.Steps)
+                                {
+                                    <li>
+                                        @passo
+                                    </li>
+                                }
+
+                            </ol>
+                        }
+                        else
+                        {
+                            <p class="history-description">
+                                Nenhum passo registrado.
+                            </p>
+                        }
+
+
+                        @if (
+                            !string.IsNullOrWhiteSpace(
+                                item.RequestedIngredients) ||
+                            !string.IsNullOrWhiteSpace(
+                                item.Preference))
+                        {
+                            <div class="history-request">
+
+                                @if (
+                                    !string.IsNullOrWhiteSpace(
+                                        item.RequestedIngredients))
+                                {
+                                    <strong>
+                                        Ingredientes solicitados:
+                                    </strong>
+
+                                    <br />
+
+                                    @item.RequestedIngredients
+                                }
+
+
+                                @if (
+                                    !string.IsNullOrWhiteSpace(
+                                        item.Preference))
+                                {
+                                    <br />
+                                    <br />
+
+                                    <strong>
+                                        Preferência:
+                                    </strong>
+
+                                    <br />
+
+                                    @item.Preference
+                                }
+
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- =====================================
+                         RODAPÉ / DOWNLOAD
+                    ====================================== -->
+
+                    <div class="history-card-footer">
+
+                        <div class="history-date">
+
+                            🕘 Criada em
+
+                            @(
+                                item.CreatedAt
+                                    .ToLocalTime()
+                                    .ToString(
+                                        "dd/MM/yyyy HH:mm"
+                                    )
+                            )
+
+                        </div>
+
+
+                        <div class="history-actions">
+
+                            <a
+                                asp-controller="Conta"
+                                asp-action="DownloadReceita"
+                                asp-route-id="@item.Id"
+                                class="download-button">
+
+                                📥 Baixar receita
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </article>
+            }
+
+        </div>
+    }
+
+</div>

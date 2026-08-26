@@ -1,224 +1,882 @@
-﻿@model IEnumerable<chefeia.Models.Receita>
+﻿@model chefeia.Models.HomeViewModel
 
 @{
-    ViewData["Title"] = "Chefe IA";
+    ViewData["Title"] = Model.Settings.SiteName;
 }
 
 <link rel="stylesheet" href="~/css/home.css" />
 
-<section class="hero">
 
-    <div class="hero-content">
+<!-- =========================================================
+     HERO PRINCIPAL + CHEFE IA
+========================================================= -->
 
-        <span class="hero-badge">
-            ✨ Seu chef inteligente
+<section class="chef-hero">
+
+    <div class="hero-copy">
+
+        <div class="brand-pill">
+            👨‍🍳 @Model.Settings.SiteName
+        </div>
+
+        <span class="hero-kicker">
+            ✨ COZINHE COM INTELIGÊNCIA ARTIFICIAL
         </span>
 
         <h1>
-            O que vamos cozinhar hoje?
+            O que você tem
+            <span>em casa?</span>
         </h1>
 
-        <p>
-            Digite um ingrediente e descubra receitas
-            do mundo inteiro.
+        <p class="hero-subtitle">
+            Adicione os ingredientes disponíveis e deixe o
+            Chefe IA criar uma receita personalizada para você.
         </p>
 
-        <div class="search-box">
 
-            <input id="ingredienteBusca"
-                   type="text"
-                   placeholder="Ex: leite condensado..." />
+        <!-- INGREDIENTES -->
 
-            <button id="btnBuscar">
-                🔍 Encontrar receitas
+        <div class="hero-ai-box">
+
+            <div class="hero-ingredient-input">
+
+                <input
+                    id="ingredienteIA"
+                    type="text"
+                    placeholder="Ex: ovo, arroz, queijo..." />
+
+                <button
+                    id="btnAdicionarIngrediente"
+                    type="button">
+
+                    + Adicionar
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="listaIngredientes"
+                class="lista-ingredientes">
+            </div>
+
+
+            <div class="hero-options">
+
+                <div class="hero-option">
+
+                    <label for="preferenciaIA">
+                        🍽️ Preferência
+                    </label>
+
+                    <select id="preferenciaIA">
+
+                        <option value="">
+                            Qualquer
+                        </option>
+
+                        <option value="prato principal">
+                            Prato principal
+                        </option>
+
+                        <option value="sobremesa">
+                            Sobremesa
+                        </option>
+
+                        <option value="bolo">
+                            Bolo
+                        </option>
+
+                        <option value="doce">
+                            Doce
+                        </option>
+
+                        <option value="salgado">
+                            Salgado
+                        </option>
+
+                        <option value="rápido">
+                            Rápido
+                        </option>
+
+                        <option value="saudável">
+                            Saudável
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="hero-option">
+
+                    <label for="porcoesIA">
+                        👥 Porções
+                    </label>
+
+                    <input
+                        id="porcoesIA"
+                        type="number"
+                        value="4"
+                        min="1"
+                        max="20" />
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="btnDescobrirIA"
+                class="hero-ai-button"
+                type="button">
+
+                ✨ Criar minha receita
+
+            </button>
+
+
+            <div class="hero-usage">
+
+                🌿 Gratuito:
+
+                <strong>
+                    @Model.Settings.FreeMonthlyLimit
+                    consultas por mês
+                </strong>
+
+            </div>
+
+
+            <div id="statusIA"></div>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-image-wrap">
+
+        <img
+            src="@Model.Settings.HeroImageUrl"
+            alt="@Model.Settings.SiteName" />
+
+        <div class="hero-image-overlay"></div>
+
+
+        <div class="floating-emoji emoji-one">
+            👨‍🍳
+        </div>
+
+        <div class="floating-emoji emoji-two">
+            🍅
+        </div>
+
+        <div class="floating-emoji emoji-three">
+            🌿
+        </div>
+
+
+        <div class="hero-image-label">
+
+            <span>
+                🔥 Criação inteligente
+            </span>
+
+            <strong>
+                Você escolhe os ingredientes.
+                O Chefe IA faz o resto.
+            </strong>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     RESULTADO DA IA
+========================================================= -->
+
+<section
+    class="section generated-section"
+    id="resultadoIA"
+    style="display:none;">
+
+    <div class="section-heading">
+
+        <div>
+
+            <span class="section-kicker">
+                ✨ RECEITA PERSONALIZADA
+            </span>
+
+            <h2>
+                Sua receita está pronta
+            </h2>
+
+            <p>
+                Criada especialmente a partir dos ingredientes
+                que você informou.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <article class="generated-recipe">
+
+        <div class="generated-top">
+
+            <div>
+
+                <span
+                    id="paisReceitaIA"
+                    class="generated-country">
+                </span>
+
+                <h3 id="nomeReceitaIA">
+                </h3>
+
+                <p id="descricaoReceitaIA">
+                </p>
+
+            </div>
+
+
+            <div class="generated-chef">
+                👨‍🍳
+            </div>
+
+        </div>
+
+
+        <div class="generated-meta">
+
+            <span id="categoriaReceitaIA">
+            </span>
+
+            <span id="tempoReceitaIA">
+            </span>
+
+            <span id="porcoesReceitaIA">
+            </span>
+
+        </div>
+
+
+        <div class="recipe-columns">
+
+            <div class="recipe-column ingredients-column">
+
+                <h4>
+                    🛒 Ingredientes
+                </h4>
+
+                <ul id="ingredientesReceitaIA">
+                </ul>
+
+            </div>
+
+
+            <div class="recipe-column steps-column">
+
+                <h4>
+                    👨‍🍳 Modo de preparo
+                </h4>
+
+                <ol id="passosReceitaIA">
+                </ol>
+
+            </div>
+
+        </div>
+
+    </article>
+
+</section>
+
+
+
+<!-- =========================================================
+     BENEFÍCIOS
+========================================================= -->
+
+<section class="feature-grid">
+
+    <article class="feature-card">
+
+        <div class="feature-emoji">
+            @Model.Settings.Feature1Emoji
+        </div>
+
+        <h3>
+            @Model.Settings.Feature1Title
+        </h3>
+
+        <p>
+            @Model.Settings.Feature1Text
+        </p>
+
+    </article>
+
+
+    <article class="feature-card">
+
+        <div class="feature-emoji">
+            @Model.Settings.Feature2Emoji
+        </div>
+
+        <h3>
+            @Model.Settings.Feature2Title
+        </h3>
+
+        <p>
+            @Model.Settings.Feature2Text
+        </p>
+
+    </article>
+
+
+    <article class="feature-card">
+
+        <div class="feature-emoji">
+            @Model.Settings.Feature3Emoji
+        </div>
+
+        <h3>
+            @Model.Settings.Feature3Title
+        </h3>
+
+        <p>
+            @Model.Settings.Feature3Text
+        </p>
+
+    </article>
+
+
+    <article class="feature-card">
+
+        <div class="feature-emoji">
+            @Model.Settings.Feature4Emoji
+        </div>
+
+        <h3>
+            @Model.Settings.Feature4Title
+        </h3>
+
+        <p>
+            @Model.Settings.Feature4Text
+        </p>
+
+    </article>
+
+</section>
+
+
+
+<!-- =========================================================
+     COMO FUNCIONA
+========================================================= -->
+
+<section class="how-section">
+
+    <div class="section-heading center">
+
+        <div>
+
+            <span class="section-kicker">
+                👨‍🍳 MUITO SIMPLES
+            </span>
+
+            <h2>
+                Como funciona?
+            </h2>
+
+            <p>
+                Da sua geladeira para uma nova receita em poucos passos.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="how-grid">
+
+        <article class="how-card">
+
+            <span class="how-number">
+                01
+            </span>
+
+            <div class="how-icon">
+                🧺
+            </div>
+
+            <h3>
+                Informe
+            </h3>
+
+            <p>
+                Adicione os ingredientes
+                que você tem disponível.
+            </p>
+
+        </article>
+
+
+        <article class="how-card">
+
+            <span class="how-number">
+                02
+            </span>
+
+            <div class="how-icon">
+                ✨
+            </div>
+
+            <h3>
+                Gere
+            </h3>
+
+            <p>
+                Nossa IA analisa os ingredientes
+                e cria uma receita.
+            </p>
+
+        </article>
+
+
+        <article class="how-card">
+
+            <span class="how-number">
+                03
+            </span>
+
+            <div class="how-icon">
+                🍲
+            </div>
+
+            <h3>
+                Cozinhe
+            </h3>
+
+            <p>
+                Siga os ingredientes e
+                o passo a passo.
+            </p>
+
+        </article>
+
+
+        <article class="how-card">
+
+            <span class="how-number">
+                04
+            </span>
+
+            <div class="how-icon">
+                😋
+            </div>
+
+            <h3>
+                Aproveite
+            </h3>
+
+            <p>
+                Descubra novos sabores
+                todos os dias.
+            </p>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     RECEITA EM DESTAQUE
+========================================================= -->
+
+<section class="featured-section">
+
+    <div class="featured-image">
+
+        <img
+            src="@Model.Settings.FeaturedRecipeImageUrl"
+            alt="@Model.Settings.FeaturedRecipeTitle" />
+
+        <div class="featured-overlay"></div>
+
+    </div>
+
+
+    <div class="featured-content">
+
+        <span class="section-kicker light">
+            🔥 RECEITA EM DESTAQUE
+        </span>
+
+        <h2>
+            @Model.Settings.FeaturedRecipeTitle
+        </h2>
+
+        <span class="country-badge">
+
+            🌎
+            @Model.Settings.FeaturedRecipeCountry
+
+        </span>
+
+
+        <div class="featured-meta">
+
+            <span>
+                👥
+                @Model.Settings.FeaturedRecipeServings
+                porções
+            </span>
+
+            <span>
+                ⏱️
+                @Model.Settings.FeaturedRecipeMinutes
+                min
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     PLANOS
+========================================================= -->
+
+<section
+    class="plans-section"
+    id="planos">
+
+    <div class="section-heading center">
+
+        <div>
+
+            <span class="section-kicker">
+                👑 PLANOS
+            </span>
+
+            <h2>
+                Escolha sua experiência
+            </h2>
+
+            <p>
+                Comece gratuitamente e faça upgrade quando quiser.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="plans-grid">
+
+        <!-- GRATUITO -->
+
+        <article class="plan-card">
+
+            <div class="plan-header">
+
+                <div class="plan-icon">
+                    🌿
+                </div>
+
+                <div>
+
+                    <span class="plan-type">
+                        PARA EXPERIMENTAR
+                    </span>
+
+                    <h3>
+                        Gratuito
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="plan-limit">
+
+                @Model.Settings.FreeMonthlyLimit
+
+                <small>
+                    consultas por mês
+                </small>
+
+            </div>
+
+
+            <ul>
+
+                <li>
+                    ✓ Receitas criadas com IA
+                </li>
+
+                <li>
+                    ✓ Escolha de porções
+                </li>
+
+                <li>
+                    ✓ Escolha da preferência
+                </li>
+
+                <li class="disabled">
+                    ✕ Sem histórico
+                </li>
+
+                <li class="disabled">
+                    ✕ Sem download
+                </li>
+
+                <li class="disabled">
+                    ✕ Com anúncios
+                </li>
+
+            </ul>
+
+
+            <div class="free-plan-label">
+                Sempre grátis
+            </div>
+
+        </article>
+
+
+        <!-- PREMIUM -->
+
+        <article class="plan-card premium-card">
+
+            <div class="premium-tag">
+                👑 MAIS COMPLETO
+            </div>
+
+
+            <div class="plan-header">
+
+                <div class="plan-icon">
+                    ⭐
+                </div>
+
+                <div>
+
+                    <span class="plan-type">
+                        PARA QUEM AMA COZINHAR
+                    </span>
+
+                    <h3>
+                        Premium
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="plan-limit">
+
+                @Model.Settings.PremiumMonthlyLimit
+
+                <small>
+                    consultas por mês
+                </small>
+
+            </div>
+
+
+            <ul>
+
+                <li>
+                    ✓ Sem anúncios
+                </li>
+
+                <li>
+                    ✓ Histórico das receitas
+                </li>
+
+                <li>
+                    ✓ Download das receitas
+                </li>
+
+                <li>
+                    ✓ Favoritos
+                </li>
+
+                <li>
+                    ✓ Conta pessoal
+                </li>
+
+                <li>
+                    ✓ Recursos Premium
+                </li>
+
+            </ul>
+
+
+            <div class="premium-price">
+
+                <small>
+                    R$
+                </small>
+
+                @Model.Settings.PremiumPrice.ToString("N2")
+
+                <span>
+                    /mês
+                </span>
+
+            </div>
+
+
+            <a
+                asp-controller="Assinatura"
+                asp-action="Premium"
+                class="premium-button">
+
+                👑 Assinar Premium
+
+            </a>
+
+        </article>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     EXPLORAR RECEITAS PRONTAS
+========================================================= -->
+
+<section class="catalog-section">
+
+    <div class="catalog-intro">
+
+        <div>
+
+            <span class="section-kicker">
+                🌎 EXPLORE
+            </span>
+
+            <h2>
+                Receitas prontas
+            </h2>
+
+            <p>
+                Prefere explorar receitas que já existem?
+                Pesquise aqui sem gastar sua consulta de IA.
+            </p>
+
+        </div>
+
+
+        <div class="catalog-search">
+
+            <input
+                id="ingredienteBusca"
+                type="text"
+                placeholder="@Model.Settings.SearchPlaceholder" />
+
+            <button
+                id="btnBuscar"
+                type="button">
+
+                🔎 Buscar
+
             </button>
 
         </div>
 
-        <div id="resultadoBusca" class="resultado-busca"></div>
-
     </div>
 
-</section>
 
-<section class="section" id="secaoResultados" style="display: none;">
-
-    <h2>🔎 Resultado da busca</h2>
-
-    <div id="receitasEncontradas" class="recipes-grid"></div>
-
-</section>
+    <div id="resultadoBusca"></div>
 
 
-<section class="section">
+    <div
+        id="secaoResultados"
+        style="display:none;">
 
-    <h2>🌎 Explore sabores pelo mundo</h2>
-
-    <div class="countries">
-
-        <button>🇧🇷 <span>Brasil</span></button>
-
-        <button>🇮🇹 <span>Itália</span></button>
-
-        <button>🇲🇽 <span>México</span></button>
-
-        <button>🇯🇵 <span>Japão</span></button>
-
-        <button>🇫🇷 <span>França</span></button>
-
-        <button>🇵🇹 <span>Portugal</span></button>
+        <div
+            class="recipes-grid"
+            id="receitasEncontradas">
+        </div>
 
     </div>
 
 </section>
 
 
-<section class="section ingredient-section">
 
-    <h2>🥕 O que você tem em casa?</h2>
+<!-- =========================================================
+     RECEITAS POPULARES
+========================================================= -->
 
-    <p>
-        Informe seus ingredientes e nosso Chefe IA
-        vai ajudar você a descobrir o que preparar.
-    </p>
+<section class="section popular-section">
 
-   <section class="section ingredient-section">
-
-    <h2>🥕 O que você tem em casa?</h2>
-
-    <p>
-        Adicione os ingredientes disponíveis e deixe o Chefe IA sugerir uma receita.
-    </p>
-
-    <div class="ingredients-box">
-
-        <input
-            id="ingredienteIA"
-            type="text"
-            placeholder="Ex: leite condensado..." />
-
-        <button
-            id="btnAdicionarIngrediente"
-            type="button">
-            + Adicionar ingrediente
-        </button>
-
-    </div>
-
-    <div id="listaIngredientes" class="lista-ingredientes"></div>
-
-    <div class="preferencias-ia">
+    <div class="section-heading">
 
         <div>
-            <label for="preferenciaIA">
-                Preferência
-            </label>
 
-            <select id="preferenciaIA">
-                <option value="">Qualquer</option>
-                <option value="sobremesa">Sobremesa</option>
-                <option value="bolo">Bolo</option>
-                <option value="doce">Doce</option>
-                <option value="salgado">Salgado</option>
-                <option value="rápido">Rápido</option>
-            </select>
-        </div>
+            <span class="section-kicker">
+                🔥 INSPIRAÇÃO
+            </span>
 
-        <div>
-            <label for="porcoesIA">
-                Porções
-            </label>
+            <h2>
+                Receitas em destaque
+            </h2>
 
-            <input
-                id="porcoesIA"
-                type="number"
-                value="4"
-                min="1"
-                max="20" />
-        </div>
-
-    </div>
-
-    <button
-        id="btnDescobrirIA"
-        class="ai-button"
-        type="button">
-        ✨ Descobrir com Chefe IA
-    </button>
-
-    <small>
-        3 consultas inteligentes gratuitas por mês
-    </small>
-
-    <div id="statusIA"></div>
-
-</section>
-
-
-<section
-    class="section"
-    id="resultadoIA"
-    style="display: none;">
-
-    <h2>✨ Sugestão do Chefe IA</h2>
-
-    <div class="receita-ia-card">
-
-        <span id="paisReceitaIA"></span>
-
-        <h3 id="nomeReceitaIA"></h3>
-
-        <p id="descricaoReceitaIA"></p>
-
-        <div class="receita-ia-info">
-
-            <span id="categoriaReceitaIA"></span>
-
-            <span id="tempoReceitaIA"></span>
-
-            <span id="porcoesReceitaIA"></span>
-
-        </div>
-
-        <div class="receita-ia-conteudo">
-
-            <div>
-                <h4>Ingredientes</h4>
-
-                <ul id="ingredientesReceitaIA"></ul>
-            </div>
-
-            <div>
-                <h4>Modo de preparo</h4>
-
-                <ol id="passosReceitaIA"></ol>
-            </div>
+            <p>
+                Algumas ideias para você descobrir novos sabores.
+            </p>
 
         </div>
 
     </div>
 
-</section>
-
-
-<section class="section">
-
-    <h2>🔥 Receitas em destaque</h2>
 
     <div class="recipes-grid">
 
-        @foreach (var receita in Model)
+        @foreach (var receita in Model.Receitas)
         {
             <article class="recipe-card">
 
-                <img src="@receita.ImagemUrl"
-                     alt="@receita.Nome" />
+                <div class="recipe-image">
+
+                    <img
+                        src="@receita.ImagemUrl"
+                        alt="@receita.Nome" />
+
+                    <span class="recipe-country">
+
+                        @receita.Bandeira
+                        @receita.Pais
+
+                    </span>
+
+                </div>
+
 
                 <div class="recipe-info">
-
-                    <span class="country">
-                        @receita.Bandeira @receita.Pais
-                    </span>
 
                     <h3>
                         @receita.Nome
@@ -228,14 +886,17 @@
                         @receita.Descricao
                     </p>
 
+
                     <div class="recipe-details">
 
                         <span>
-                            ⏱ @receita.TempoPreparoMinutos min
+                            ⏱️
+                            @receita.TempoPreparoMinutos min
                         </span>
 
                         <span>
-                            👨‍🍳 @receita.Dificuldade
+                            👨‍🍳
+                            @receita.Dificuldade
                         </span>
 
                     </div>
@@ -250,14 +911,41 @@
 </section>
 
 
-<section class="ad-section">
 
-    <span>Publicidade</span>
+<!-- =========================================================
+     CTA PREMIUM
+========================================================= -->
+
+<section class="final-cta">
 
     <div>
-        Espaço reservado para anúncio
+
+        <span>
+            👑 CHEFE IA PREMIUM
+        </span>
+
+        <h2>
+            Suas melhores receitas,
+            sempre com você.
+        </h2>
+
+        <p>
+            Tenha histórico, downloads, favoritos
+            e até @Model.Settings.PremiumMonthlyLimit consultas por mês.
+        </p>
+
     </div>
 
+
+    <a
+        asp-controller="Assinatura"
+        asp-action="Premium">
+
+        Assinar Premium →
+
+    </a>
+
 </section>
+
 
 <script src="~/js/home.js"></script>

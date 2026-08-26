@@ -1,81 +1,241 @@
 using chefeia.Data;
+using chefeia.Models;
 using chefeia.Services;
 using chefeia.Services.AI;
+using chefeia.Services.Asaas;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder =
+    WebApplication.CreateBuilder(args);
+
 
 // =====================================================
-// SERVIÇOS
+// MVC
 // =====================================================
 
-// Controllers + Views MVC
 builder.Services.AddControllersWithViews();
 
 
 // =====================================================
-// BANCO DE DADOS - POSTGRESQL
+// ACESSO AO USUÁRIO LOGADO VIA HTTPCONTEXT
 // =====================================================
 
-// AppDbContext será responsável pela comunicação
-// entre o Chefe IA e o PostgreSQL.
-//
-// Futuramente teremos aqui:
-// - Usuários
-// - Planos
-// - Assinaturas
-// - Consumo de IA
-// - Histórico de consultas
-// - Configurações administrativas
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    var connectionString =
-        builder.Configuration.GetConnectionString(
-            "DefaultConnection"
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+
+
+// =====================================================
+// POSTGRESQL
+// =====================================================
+
+builder.Services.AddDbContext<AppDbContext>(
+    options =>
+    {
+        var connectionString =
+            builder.Configuration
+                .GetConnectionString(
+                    "DefaultConnection"
+                );
+
+        options.UseNpgsql(
+            connectionString
         );
-
-    options.UseNpgsql(connectionString);
-});
-
-
-// =====================================================
-// SERVIÇO DE RECEITAS
-// =====================================================
-
-// Por enquanto utiliza nossas receitas de teste.
-// Mais adiante as receitas poderão vir do PostgreSQL.
-builder.Services.AddScoped<IReceitaService, ReceitaService>();
+    }
+);
 
 
 // =====================================================
-// SERVIÇO DO CHEFE IA
+// ASP.NET CORE IDENTITY
 // =====================================================
 
-// HttpClient permite que o ChefeIAService
-// faça chamadas para a API externa de IA.
-builder.Services.AddHttpClient<IChefeIAService, ChefeIAService>();
+builder.Services
+    .AddIdentity<AppUser, IdentityRole>(
+        options =>
+        {
+            // =============================================
+            // SENHA
+            // =============================================
+
+            options.Password.RequiredLength = 6;
+
+            options.Password.RequireDigit = true;
+
+            options.Password.RequireLowercase = true;
+
+            options.Password.RequireUppercase = true;
+
+            options.Password.RequireNonAlphanumeric = false;
+
+
+            // =============================================
+            // USUÁRIO
+            // =============================================
+
+            options.User.RequireUniqueEmail = true;
+
+
+            // =============================================
+            // LOGIN
+            // =============================================
+
+            options.SignIn.RequireConfirmedEmail = false;
+
+            options.SignIn.RequireConfirmedAccount = false;
+
+
+            // =============================================
+            // BLOQUEIO POR TENTATIVAS
+            // =============================================
+
+            options.Lockout.AllowedForNewUsers = true;
+
+            options.Lockout.MaxFailedAccessAttempts = 5;
+
+            options.Lockout.DefaultLockoutTimeSpan =
+                TimeSpan.FromMinutes(10);
+        }
+    )
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 
 // =====================================================
-// CONSTRUÇÃO DA APLICAÇÃO
+// COOKIE DE LOGIN
 // =====================================================
 
-var app = builder.Build();
+builder.Services.ConfigureApplicationCookie(
+    options =>
+    {
+        options.LoginPath =
+            "/Conta/Login";
+
+        options.AccessDeniedPath =
+            "/Conta/AcessoNegado";
+
+        options.ExpireTimeSpan =
+            TimeSpan.FromDays(30);
+
+        options.SlidingExpiration =
+            true;
+
+        options.Cookie.Name =
+            "ChefeIA.Auth";
+
+        options.Cookie.HttpOnly =
+            true;
+
+        options.Cookie.IsEssential =
+            true;
+    }
+);
 
 
 // =====================================================
-// PIPELINE HTTP
+// RECEITAS
+// =====================================================
+
+builder.Services.AddScoped<
+    IReceitaService,
+    ReceitaService
+>();
+
+
+// =====================================================
+// CONFIGURAÇÕES DO SITE
+// =====================================================
+
+builder.Services.AddScoped<
+    ISiteSettingsService,
+    SiteSettingsService
+>();
+
+
+// =====================================================
+// PLANOS
+// =====================================================
+
+builder.Services.AddScoped<
+    IPlanService,
+    PlanService
+>();
+
+
+// =====================================================
+// CONTROLE DE LIMITE DA IA
+// =====================================================
+
+builder.Services.AddScoped<
+    IAiUsageLimitService,
+    AiUsageLimitService
+>();
+
+
+// =====================================================
+// IA
+// =====================================================
+
+builder.Services.AddHttpClient<
+    IChefeIAService,
+    ChefeIAService
+>();
+
+
+// =====================================================
+// ASAAS - CONFIGURAÇÕES
+// =====================================================
+
+builder.Services.Configure<AsaasOptions>(
+    builder.Configuration
+        .GetSection("Asaas")
+);
+
+
+// =====================================================
+// ASAAS - SERVIÇO
+// =====================================================
+
+builder.Services.AddHttpClient<
+    IAsaasService,
+    AsaasService
+>();
+
+
+// =====================================================
+// CONSTRUIR APLICAÇÃO
+// =====================================================
+
+var app =
+    builder.Build();
+
+
+// =====================================================
+// CRIAR ROLES E USUÁRIO ADMIN
+// =====================================================
+
+await IdentitySeed.InicializarAsync(
+    app.Services
+);
+
+
+// =====================================================
+// PIPELINE
 // =====================================================
 
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler(
+        "/Home/Error"
+    );
 
     app.UseHsts();
 }
 
 
-// Redireciona HTTP para HTTPS
+// =====================================================
+// HTTPS
+// =====================================================
+
 app.UseHttpsRedirection();
 
 
@@ -83,9 +243,6 @@ app.UseHttpsRedirection();
 // ARQUIVOS ESTÁTICOS
 // =====================================================
 
-// CSS
-// JavaScript
-// Imagens
 app.MapStaticAssets();
 
 
@@ -97,32 +254,22 @@ app.UseRouting();
 
 
 // =====================================================
+// AUTENTICAÇÃO
+// =====================================================
+
+app.UseAuthentication();
+
+
+// =====================================================
 // AUTORIZAÇÃO
 // =====================================================
 
-// Mais adiante adicionaremos:
-//
-// Login
-// Cadastro
-// Usuário administrador
-// Plano Gratuito
-// Plano Premium
-// Controle de acesso ao painel administrativo
 app.UseAuthorization();
 
 
 // =====================================================
-// ENDPOINTS DA API
+// CONTROLLERS / API
 // =====================================================
-
-// Exemplos:
-//
-// GET  /api/receitas
-// GET  /api/receitas/buscar
-// GET  /api/ingredientes/buscar
-// GET  /api/paises
-//
-// POST /api/ai/sugerir-receita
 
 app.MapControllers();
 
@@ -133,12 +280,14 @@ app.MapControllers();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern:
+        "{controller=Home}/{action=Index}/{id?}"
+)
+.WithStaticAssets();
 
 
 // =====================================================
-// INICIAR APLICAÇÃO
+// INICIAR
 // =====================================================
 
 app.Run();

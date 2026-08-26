@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Pagamento recebido";
+}
+
+<div style="
+    max-width:720px;
+    margin:70px auto;
+    padding:45px;
+    text-align:center;
+    background:white;
+    border:1px solid #eadfd4;
+    border-radius:25px;
+">
+
+    <div style="font-size:60px;">
+        ✅
+    </div>
+
+    <h1 style="color:#2b170d;">
+        Pagamento enviado
+    </h1>
+
+    <p style="
+        color:#786a60;
+        line-height:1.7;
+    ">
+        O Asaas recebeu seu pagamento.
+        Estamos aguardando a confirmação financeira.
+        Assim que ela chegar, seu plano Premium será
+        ativado automaticamente.
+    </p>
+
+    <a
+        asp-controller="Home"
+        asp-action="Index"
+        style="
+            display:inline-block;
+            margin-top:18px;
+            padding:12px 20px;
+            border-radius:10px;
+            background:#f5661b;
+            color:white;
+            text-decoration:none;
+            font-weight:900;
+        ">
+
+        Voltar ao Chefe IA
+
+    </a>
+
+</div>

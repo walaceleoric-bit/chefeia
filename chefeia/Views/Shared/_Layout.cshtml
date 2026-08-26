@@ -1,50 +1,731 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - chefeia</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/chefeia.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">chefeia</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+﻿@using chefeia.Models
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<AppUser> UserManager
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - chefeia - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+@{
+    AppUser? usuarioLogado = null;
+
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        usuarioLogado =
+            await UserManager.GetUserAsync(User);
+    }
+
+    var isAdmin =
+        User.Identity?.IsAuthenticated == true &&
+        User.IsInRole("Admin");
+
+    var isPremium =
+        usuarioLogado?.PlanCode == "PREMIUM";
+}
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - Chefe IA
+    </title>
+
+    <script type="importmap"></script>
+
+
+    <link
+        rel="stylesheet"
+        href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link
+        rel="stylesheet"
+        href="~/css/site.css"
+        asp-append-version="true" />
+
+    <link
+        rel="stylesheet"
+        href="~/chefeia.styles.css"
+        asp-append-version="true" />
+
+
+    <style>
+
+        .chefe-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            background: rgba(255, 252, 247, .96);
+
+            border-bottom:
+                1px solid #eadfd4;
+
+            backdrop-filter:
+                blur(14px);
+        }
+
+        .chefe-nav {
+            max-width: 1240px;
+
+            min-height: 72px;
+
+            margin: 0 auto;
+
+            padding: 0 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 25px;
+        }
+
+        .chefe-logo {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+
+            text-decoration: none;
+
+            color: #2b170d;
+
+            white-space: nowrap;
+        }
+
+        .chefe-logo-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 13px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #f5661b;
+
+            font-size: 21px;
+
+            box-shadow:
+                0 7px 20px rgba(245, 102, 27, .20);
+        }
+
+        .chefe-logo-text {
+            display: flex;
+            flex-direction: column;
+
+            line-height: 1.05;
+        }
+
+        .chefe-logo-text strong {
+            font-size: 18px;
+            font-weight: 900;
+
+            color: #2b170d;
+        }
+
+        .chefe-logo-text small {
+            margin-top: 4px;
+
+            color: #97877c;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            letter-spacing: .7px;
+
+            text-transform: uppercase;
+        }
+
+        .chefe-menu {
+            display: flex;
+            align-items: center;
+
+            gap: 7px;
+        }
+
+        .chefe-menu a {
+            padding: 9px 12px;
+
+            border-radius: 9px;
+
+            color: #59483e;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            transition: .2s;
+        }
+
+        .chefe-menu a:hover {
+            background: #f4ece5;
+
+            color: #2b170d;
+        }
+
+        .chefe-account {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .guest-actions {
+            display: flex;
+            align-items: center;
+
+            gap: 8px;
+        }
+
+        .btn-login {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 10px 15px;
+
+            border-radius: 10px;
+
+            border: 1px solid #dccfc5;
+
+            background: white;
+
+            color: #2b170d;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 800;
+
+            transition: .2s;
+        }
+
+        .btn-login:hover {
+            background: #f7f0e9;
+
+            color: #2b170d;
+        }
+
+        .btn-register {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 10px 16px;
+
+            border-radius: 10px;
+
+            background: #f5661b;
+
+            color: white;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+            transition: .2s;
+
+            box-shadow:
+                0 6px 18px rgba(245, 102, 27, .18);
+        }
+
+        .btn-register:hover {
+            background: #dc5510;
+
+            color: white;
+        }
+
+        .logged-account {
+            display: flex;
+            align-items: center;
+
+            gap: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+
+            align-items: flex-end;
+
+            line-height: 1.15;
+        }
+
+        .user-name {
+            color: #2b170d;
+
+            font-size: 13px;
+
+            font-weight: 900;
+
+            max-width: 170px;
+
+            overflow: hidden;
+
+            white-space: nowrap;
+
+            text-overflow: ellipsis;
+        }
+
+        .user-plan {
+            display: inline-flex;
+            align-items: center;
+
+            margin-top: 4px;
+
+            font-size: 10px;
+
+            font-weight: 800;
+        }
+
+        .user-plan-free {
+            color: #347b35;
+        }
+
+        .user-plan-premium {
+            color: #d75816;
+        }
+
+        .user-plan-admin {
+            color: #6747aa;
+        }
+
+        .admin-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 9px 12px;
+
+            border-radius: 9px;
+
+            background: #eee8ff;
+
+            color: #5c3fa1;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 900;
+        }
+
+        .admin-link:hover {
+            background: #e3d9ff;
+
+            color: #4d338e;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .btn-logout {
+            border: 0;
+
+            padding: 9px 12px;
+
+            border-radius: 9px;
+
+            background: #2b170d;
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 12px;
+
+            font-weight: 800;
+
+            transition: .2s;
+        }
+
+        .btn-logout:hover {
+            background: #4b2918;
+        }
+
+        .chefe-main {
+            min-height:
+                calc(100vh - 160px);
+        }
+
+        .chefe-footer {
+            margin-top: 60px;
+
+            padding: 28px 20px;
+
+            border-top:
+                1px solid #eadfd4;
+
+            background: #fffaf5;
+
+            color: #89796f;
+        }
+
+        .chefe-footer-inner {
+            max-width: 1240px;
+
+            margin: 0 auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+
+            font-size: 12px;
+        }
+
+        .chefe-footer strong {
+            color: #2b170d;
+        }
+
+        @@media(max-width: 900px) {
+
+            .chefe-menu {
+                display: none;
+            }
+
+            .user-info {
+                display: none;
+            }
+        }
+
+        @@media(max-width: 650px) {
+
+            .chefe-nav {
+                min-height: 65px;
+
+                padding: 0 12px;
+
+                gap: 10px;
+            }
+
+            .chefe-logo-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .chefe-logo-text small {
+                display: none;
+            }
+
+            .chefe-logo-text strong {
+                font-size: 16px;
+            }
+
+            .btn-login {
+                padding: 8px 10px;
+            }
+
+            .btn-register {
+                padding: 8px 10px;
+            }
+
+            .admin-link {
+                padding: 8px 9px;
+            }
+
+            .btn-logout {
+                padding: 8px 9px;
+            }
+
+            .chefe-footer-inner {
+                flex-direction: column;
+
+                text-align: center;
+            }
+        }
+
+        @@media(max-width: 450px) {
+
+            .btn-login {
+                font-size: 0;
+            }
+
+            .btn-login::after {
+                content: "Entrar";
+
+                font-size: 12px;
+            }
+
+            .btn-register {
+                font-size: 0;
+            }
+
+            .btn-register::after {
+                content: "Criar";
+
+                font-size: 12px;
+            }
+
+            .admin-link {
+                font-size: 0;
+            }
+
+            .admin-link::after {
+                content: "⚙️";
+
+                font-size: 16px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <header class="chefe-header">
+
+        <nav class="chefe-nav">
+
+            <a
+                class="chefe-logo"
+                asp-controller="Home"
+                asp-action="Index">
+
+                <span class="chefe-logo-icon">
+                    👨‍🍳
+                </span>
+
+                <span class="chefe-logo-text">
+
+                    <strong>
+                        Chefe IA
+                    </strong>
+
+                    <small>
+                        Cozinhe com inteligência
+                    </small>
+
+                </span>
+
+            </a>
+
+
+            <div class="chefe-menu">
+
+                <a
+                    asp-controller="Home"
+                    asp-action="Index">
+
+                    🏠 Início
+
+                </a>
+
+
+                <a
+                    asp-controller="Home"
+                    asp-action="Index">
+
+                    ✨ Chefe IA
+
+                </a>
+
+
+                @if (usuarioLogado != null && isPremium)
+                {
+                    <a
+                        asp-controller="Conta"
+                        asp-action="Historico">
+
+                        🕘 Histórico
+
+                    </a>
+                }
+
+            </div>
+
+
+            <div class="chefe-account">
+
+                @if (
+                    User.Identity?.IsAuthenticated != true ||
+                    usuarioLogado == null)
+                {
+                    <div class="guest-actions">
+
+                        <a
+                            asp-controller="Conta"
+                            asp-action="Login"
+                            class="btn-login">
+
+                            🔐 Entrar
+
+                        </a>
+
+
+                        <a
+                            asp-controller="Conta"
+                            asp-action="Cadastro"
+                            class="btn-register">
+
+                            🌿 Criar conta grátis
+
+                        </a>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="logged-account">
+
+                        <div class="user-info">
+
+                            <span class="user-name">
+
+                                Olá,
+                                @(string.IsNullOrWhiteSpace(
+                                    usuarioLogado.Name)
+                                    ? usuarioLogado.Email
+                                    : usuarioLogado.Name)
+
+                            </span>
+
+
+                            @if (isAdmin)
+                            {
+                                <span
+                                    class="user-plan user-plan-admin">
+
+                                    🛡️ Administrador
+
+                                </span>
+                            }
+                            else if (isPremium)
+                            {
+                                <span
+                                    class="user-plan user-plan-premium">
+
+                                    👑 Plano Premium
+
+                                </span>
+                            }
+                            else
+                            {
+                                <span
+                                    class="user-plan user-plan-free">
+
+                                    🌿 Plano Gratuito
+
+                                </span>
+                            }
+
+                        </div>
+
+
+                        @if (isAdmin)
+                        {
+                            <a
+                                asp-controller="Admin"
+                                asp-action="Index"
+                                class="admin-link">
+
+                                ⚙️ Painel Admin
+
+                            </a>
+                        }
+
+
+                        <form
+                            asp-controller="Conta"
+                            asp-action="Logout"
+                            method="post"
+                            class="logout-form">
+
+                            @Html.AntiForgeryToken()
+
+                            <button
+                                type="submit"
+                                class="btn-logout">
+
+                                Sair
+
+                            </button>
+
+                        </form>
+
+                    </div>
+                }
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <main
+        role="main"
+        class="chefe-main">
+
+        @RenderBody()
+
+    </main>
+
+
+    <footer class="chefe-footer">
+
+        <div class="chefe-footer-inner">
+
+            <div>
+
+                <strong>
+                    👨‍🍳 Chefe IA
+                </strong>
+
+                <span>
+                    — Receitas que surpreendem.
+                </span>
+
+            </div>
+
+
+            <div>
+                © @DateTime.Now.Year Chefe IA
+            </div>
+
         </div>
+
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+
+
+    <script
+        src="~/lib/jquery/dist/jquery.min.js">
+    </script>
+
+
+    <script
+        src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <script
+        src="~/js/site.js"
+        asp-append-version="true">
+    </script>
+
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false
+    )
+
 </body>
+
 </html>

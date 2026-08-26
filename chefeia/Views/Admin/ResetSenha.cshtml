@@ -1,0 +1,239 @@
+﻿@model chefeia.Models.AdminResetSenhaViewModel
+
+@{
+    ViewData["Title"] = "Redefinir senha";
+}
+
+<style>
+
+    body {
+        background: #f5f1eb;
+    }
+
+    .password-admin {
+        max-width: 650px;
+        margin: 50px auto 80px;
+        padding: 0 20px;
+    }
+
+    .password-box {
+        background: white;
+        border-radius: 22px;
+        padding: 32px;
+        border: 1px solid #eadfd4;
+        box-shadow:
+            0 12px 40px rgba(50,30,17,.06);
+    }
+
+    .password-icon {
+        font-size: 45px;
+    }
+
+    .password-box h1 {
+        margin: 10px 0 5px;
+        color: #2b170d;
+    }
+
+    .password-user {
+        color: #786a60;
+        margin-bottom: 28px;
+    }
+
+    .password-user strong {
+        color: #2b170d;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 18px;
+    }
+
+    .field label {
+        font-weight: 800;
+        color: #2b170d;
+    }
+
+    .field input {
+        padding: 13px;
+        border: 1px solid #ddd1c6;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .password-info {
+        margin: 20px 0;
+        padding: 13px 15px;
+        border-radius: 10px;
+        background: #fff8ee;
+        color: #76573d;
+        font-size: 13px;
+        line-height: 1.55;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .back {
+        text-decoration: none;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: #eee7df;
+        color: #2b170d;
+        font-weight: 800;
+    }
+
+    .save {
+        border: 0;
+        padding: 12px 20px;
+        border-radius: 10px;
+        background: #f5661b;
+        color: white;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+    .validation-summary-errors {
+        margin-bottom: 20px;
+        padding: 13px 16px;
+        background: #fff0ee;
+        color: #a6382e;
+        border-radius: 10px;
+    }
+
+    .field-validation-error {
+        color: #b43a30;
+        font-size: 12px;
+    }
+
+</style>
+
+
+<div class="password-admin">
+
+    <div class="password-box">
+
+        <div class="password-icon">
+            🔑
+        </div>
+
+        <h1>
+            Redefinir senha
+        </h1>
+
+
+        <div class="password-user">
+
+            Usuário:
+
+            <strong>
+                @Model.UserName
+            </strong>
+
+            <br />
+
+            @Model.Email
+
+        </div>
+
+
+        <form
+            asp-controller="Admin"
+            asp-action="ResetSenha"
+            method="post">
+
+            @Html.AntiForgeryToken()
+
+
+            <input
+                asp-for="UserId"
+                type="hidden" />
+
+            <input
+                asp-for="UserName"
+                type="hidden" />
+
+            <input
+                asp-for="Email"
+                type="hidden" />
+
+
+            <div asp-validation-summary="ModelOnly">
+            </div>
+
+
+            <div class="field">
+
+                <label asp-for="NewPassword">
+                    Nova senha
+                </label>
+
+                <input
+                    asp-for="NewPassword"
+                    type="password"
+                    autocomplete="new-password" />
+
+                <span asp-validation-for="NewPassword">
+                </span>
+
+            </div>
+
+
+            <div class="field">
+
+                <label asp-for="ConfirmPassword">
+                    Confirmar nova senha
+                </label>
+
+                <input
+                    asp-for="ConfirmPassword"
+                    type="password"
+                    autocomplete="new-password" />
+
+                <span asp-validation-for="ConfirmPassword">
+                </span>
+
+            </div>
+
+
+            <div class="password-info">
+
+                🔒 A senha atual não pode ser visualizada.
+                O administrador apenas define uma nova senha,
+                que será armazenada com hash pelo ASP.NET Identity.
+
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    asp-controller="Admin"
+                    asp-action="Usuarios"
+                    class="back">
+
+                    ← Cancelar
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="save">
+
+                    🔑 Redefinir senha
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

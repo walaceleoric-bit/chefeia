@@ -1,0 +1,281 @@
+﻿@model chefeia.Models.AdminEditarUsuarioViewModel
+
+@{
+    ViewData["Title"] = "Editar usuário";
+}
+
+<style>
+
+    body {
+        background: #f5f1eb;
+    }
+
+    .edit-user {
+        max-width: 760px;
+        margin: 40px auto 80px;
+        padding: 0 20px;
+    }
+
+    .edit-header {
+        margin-bottom: 24px;
+    }
+
+    .edit-header h1 {
+        margin: 0;
+        color: #2b170d;
+    }
+
+    .edit-header p {
+        margin: 7px 0 0;
+        color: #786a60;
+    }
+
+    .edit-box {
+        background: white;
+        border-radius: 22px;
+        padding: 30px;
+        border: 1px solid #eadfd4;
+        box-shadow:
+            0 12px 40px rgba(50,30,17,.06);
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 18px;
+    }
+
+    .field label {
+        font-weight: 800;
+        color: #2b170d;
+    }
+
+    .field input,
+    .field select {
+        padding: 13px;
+        border: 1px solid #ddd1c6;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .check-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        padding: 15px 0;
+        border-top: 1px solid #eee5dd;
+    }
+
+    .check-box strong {
+        color: #2b170d;
+    }
+
+    .check-box small {
+        display: block;
+        margin-top: 4px;
+        color: #887a70;
+    }
+
+    .check-box input {
+        width: 20px;
+        height: 20px;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .back {
+        text-decoration: none;
+        padding: 12px 18px;
+        border-radius: 10px;
+        background: #eee7df;
+        color: #2b170d;
+        font-weight: 800;
+    }
+
+    .save {
+        border: 0;
+        padding: 12px 20px;
+        border-radius: 10px;
+        background: #f5661b;
+        color: white;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+    .validation-summary-errors {
+        margin-bottom: 20px;
+        padding: 13px 16px;
+        background: #fff0ee;
+        color: #a6382e;
+        border-radius: 10px;
+    }
+
+    .field-validation-error {
+        color: #b43a30;
+        font-size: 12px;
+    }
+
+</style>
+
+
+<div class="edit-user">
+
+    <div class="edit-header">
+
+        <h1>
+            ✏️ Editar usuário
+        </h1>
+
+        <p>
+            Gerencie dados, plano e permissões.
+        </p>
+
+    </div>
+
+
+    <form
+        asp-controller="Admin"
+        asp-action="EditarUsuario"
+        method="post">
+
+        @Html.AntiForgeryToken()
+
+
+        <input
+            asp-for="Id"
+            type="hidden" />
+
+
+        <div class="edit-box">
+
+            <div asp-validation-summary="ModelOnly">
+            </div>
+
+
+            <div class="field">
+
+                <label asp-for="Name">
+                    Nome
+                </label>
+
+                <input asp-for="Name" />
+
+                <span asp-validation-for="Name">
+                </span>
+
+            </div>
+
+
+            <div class="field">
+
+                <label asp-for="Email">
+                    E-mail
+                </label>
+
+                <input
+                    asp-for="Email"
+                    type="email" />
+
+                <span asp-validation-for="Email">
+                </span>
+
+            </div>
+
+
+            <div class="field">
+
+                <label asp-for="PlanCode">
+                    Plano
+                </label>
+
+                <select asp-for="PlanCode">
+
+                    <option value="FREE">
+                        🌿 Gratuito
+                    </option>
+
+                    <option value="PREMIUM">
+                        👑 Premium
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="check-box">
+
+                <div>
+
+                    <strong>
+                        ✅ Conta ativa
+                    </strong>
+
+                    <small>
+                        Permitir login e uso do sistema
+                    </small>
+
+                </div>
+
+                <input
+                    asp-for="IsActive"
+                    type="checkbox" />
+
+            </div>
+
+
+            <div class="check-box">
+
+                <div>
+
+                    <strong>
+                        🛡️ Administrador
+                    </strong>
+
+                    <small>
+                        Permitir acesso ao painel administrativo
+                    </small>
+
+                </div>
+
+                <input
+                    asp-for="IsAdmin"
+                    type="checkbox" />
+
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    asp-controller="Admin"
+                    asp-action="Usuarios"
+                    class="back">
+
+                    ← Voltar
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="save">
+
+                    💾 Salvar usuário
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>

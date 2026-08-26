@@ -1,0 +1,387 @@
+﻿@model chefeia.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Entrar";
+}
+
+<style>
+
+    body {
+        background:
+            linear-gradient(
+                135deg,
+                #fffaf3,
+                #f5eee6
+            );
+    }
+
+    .auth-page {
+        min-height: 78vh;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 40px 20px;
+    }
+
+    .auth-box {
+        width: 100%;
+        max-width: 980px;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        overflow: hidden;
+
+        border-radius: 28px;
+
+        background: white;
+
+        box-shadow:
+            0 22px 70px rgba(52,31,18,.13);
+    }
+
+    .auth-side {
+        min-height: 590px;
+
+        padding: 50px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+
+        color: white;
+
+        background:
+            linear-gradient(
+                rgba(43,23,13,.35),
+                rgba(43,23,13,.88)
+            ),
+            url("https://images.unsplash.com/photo-1556911220-bff31c812dba")
+            center / cover;
+    }
+
+    .auth-side span {
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 1.5px;
+        color: #ffb687;
+    }
+
+    .auth-side h1 {
+        margin: 10px 0;
+
+        font-family: Georgia, serif;
+        font-size: 45px;
+        line-height: 1.05;
+    }
+
+    .auth-side p {
+        margin: 0;
+        max-width: 390px;
+
+        color: rgba(255,255,255,.78);
+        line-height: 1.7;
+    }
+
+    .auth-form {
+        padding: 55px 48px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .auth-logo {
+        font-size: 18px;
+        font-weight: 900;
+        color: #f5661b;
+    }
+
+    .auth-form h2 {
+        margin: 14px 0 5px;
+
+        color: #2b170d;
+        font-family: Georgia, serif;
+        font-size: 35px;
+    }
+
+    .auth-form > p {
+        margin: 0 0 28px;
+        color: #786a60;
+    }
+
+    .auth-field {
+        margin-bottom: 17px;
+
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .auth-field label {
+        color: #2b170d;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .auth-field input {
+        width: 100%;
+        box-sizing: border-box;
+
+        padding: 14px 15px;
+
+        border: 1px solid #ddd1c6;
+        border-radius: 11px;
+
+        font-size: 15px;
+
+        outline: none;
+    }
+
+    .auth-field input:focus {
+        border-color: #f5661b;
+
+        box-shadow:
+            0 0 0 3px rgba(245,102,27,.10);
+    }
+
+    .remember {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        margin-bottom: 20px;
+
+        color: #66564b;
+        font-size: 13px;
+    }
+
+    .remember input {
+        width: 17px;
+        height: 17px;
+    }
+
+    .auth-button {
+        width: 100%;
+
+        border: 0;
+        border-radius: 11px;
+
+        padding: 15px;
+
+        cursor: pointer;
+
+        background: #f5661b;
+
+        color: white;
+
+        font-size: 15px;
+        font-weight: 900;
+    }
+
+    .auth-button:hover {
+        background: #d84f09;
+    }
+
+    .auth-register {
+        margin-top: 24px;
+
+        padding-top: 20px;
+
+        border-top: 1px solid #eee5dd;
+
+        text-align: center;
+
+        color: #786a60;
+
+        font-size: 14px;
+    }
+
+    .auth-register a {
+        color: #f5661b;
+        font-weight: 900;
+        text-decoration: none;
+    }
+
+    .validation-summary-errors {
+        margin-bottom: 18px;
+
+        padding: 12px 15px;
+
+        border-radius: 10px;
+
+        background: #fff0ee;
+
+        color: #a6382e;
+
+        font-size: 13px;
+    }
+
+    .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 19px;
+    }
+
+    .field-validation-error {
+        color: #b43a30;
+        font-size: 12px;
+    }
+
+    @@media(max-width: 800px) {
+
+        .auth-box {
+            grid-template-columns: 1fr;
+        }
+
+        .auth-side {
+            min-height: 300px;
+        }
+    }
+
+    @@media(max-width: 520px) {
+
+        .auth-form,
+        .auth-side {
+            padding: 35px 25px;
+        }
+    }
+
+</style>
+
+
+<div class="auth-page">
+
+    <div class="auth-box">
+
+        <section class="auth-side">
+
+            <span>
+                👨‍🍳 CHEFE IA
+            </span>
+
+            <h1>
+                Sua cozinha ficou mais inteligente.
+            </h1>
+
+            <p>
+                Entre para criar receitas personalizadas
+                e acompanhar seu plano.
+            </p>
+
+        </section>
+
+
+        <section class="auth-form">
+
+            <div class="auth-logo">
+                ✨ Chefe IA
+            </div>
+
+            <h2>
+                Bem-vindo
+            </h2>
+
+            <p>
+                Entre na sua conta para continuar.
+            </p>
+
+
+            <form
+                asp-controller="Conta"
+                asp-action="Login"
+                method="post">
+
+                @Html.AntiForgeryToken()
+
+
+                <input
+                    asp-for="ReturnUrl"
+                    type="hidden" />
+
+
+                <div
+                    asp-validation-summary="ModelOnly">
+                </div>
+
+
+                <div class="auth-field">
+
+                    <label asp-for="Email">
+                        E-mail
+                    </label>
+
+                    <input
+                        asp-for="Email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="voce@email.com" />
+
+                    <span
+                        asp-validation-for="Email">
+                    </span>
+
+                </div>
+
+
+                <div class="auth-field">
+
+                    <label asp-for="Password">
+                        Senha
+                    </label>
+
+                    <input
+                        asp-for="Password"
+                        type="password"
+                        autocomplete="current-password"
+                        placeholder="Digite sua senha" />
+
+                    <span
+                        asp-validation-for="Password">
+                    </span>
+
+                </div>
+
+
+                <label class="remember">
+
+                    <input
+                        asp-for="RememberMe"
+                        type="checkbox" />
+
+                    Manter conectado
+
+                </label>
+
+
+                <button
+                    type="submit"
+                    class="auth-button">
+
+                    Entrar →
+
+                </button>
+
+            </form>
+
+
+            <div class="auth-register">
+
+                Ainda não tem conta?
+
+                <a
+                    asp-controller="Conta"
+                    asp-action="Cadastro">
+
+                    Criar conta grátis
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>

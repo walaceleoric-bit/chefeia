@@ -1,0 +1,528 @@
+﻿@model chefeia.Models.SiteSettings
+
+@{
+    ViewData["Title"] = "Configurações";
+}
+
+<style>
+
+    body {
+        background: #f7f3ed;
+    }
+
+    .admin-page {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 20px 80px;
+    }
+
+    .admin-header {
+        background: #2c1a10;
+        color: white;
+        padding: 32px;
+        border-radius: 22px;
+        margin-bottom: 25px;
+    }
+
+    .admin-header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+    }
+
+    .admin-header p {
+        margin: 0;
+        opacity: .75;
+    }
+
+    .admin-success {
+        background: #e9f8ec;
+        color: #237a39;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    .admin-card {
+        background: white;
+        border-radius: 20px;
+        padding: 28px;
+        margin-bottom: 22px;
+        box-shadow: 0 10px 35px rgba(0,0,0,.05);
+    }
+
+    .admin-card h2 {
+        margin-top: 0;
+        color: #2c1a10;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-weight: 700;
+        color: #4c382c;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ddd4cc;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 15px;
+    }
+
+    .form-group textarea {
+        min-height: 95px;
+        resize: vertical;
+    }
+
+    .admin-save {
+        position: sticky;
+        bottom: 20px;
+        background: #2c1a10;
+        padding: 15px;
+        border-radius: 16px;
+        display: flex;
+        justify-content: flex-end;
+        box-shadow: 0 12px 30px rgba(0,0,0,.18);
+    }
+
+    .admin-save button {
+        border: 0;
+        background: #ff681f;
+        color: white;
+        padding: 14px 28px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    @@media(max-width: 760px) {
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+    }
+
+</style>
+
+
+<div class="admin-page">
+
+    <div class="admin-header">
+
+        <h1>
+            ⚙️ Configurações do Chefe IA
+        </h1>
+
+        <p>
+            Personalize a página inicial e os limites dos planos.
+        </p>
+
+    </div>
+
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="admin-success">
+
+            ✅ @TempData["Sucesso"]
+
+        </div>
+    }
+
+
+    <form
+        asp-controller="Admin"
+        asp-action="Configuracoes"
+        method="post">
+
+        @Html.AntiForgeryToken()
+
+
+        <div class="admin-card">
+
+            <h2>
+                🏠 Identidade
+            </h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label asp-for="SiteName">
+                        Nome do sistema
+                    </label>
+
+                    <input asp-for="SiteName" />
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="SiteSlogan">
+                        Slogan
+                    </label>
+
+                    <input asp-for="SiteSlogan" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-card">
+
+            <h2>
+                🖼️ Banner principal
+            </h2>
+
+            <div class="form-grid">
+
+                <div class="form-group full">
+
+                    <label asp-for="HeroTitle">
+                        Título principal
+                    </label>
+
+                    <input asp-for="HeroTitle" />
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label asp-for="HeroSubtitle">
+                        Texto principal
+                    </label>
+
+                    <textarea asp-for="HeroSubtitle"></textarea>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label asp-for="HeroImageUrl">
+                        URL da imagem principal
+                    </label>
+
+                    <input asp-for="HeroImageUrl" />
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label asp-for="SearchPlaceholder">
+                        Texto da busca
+                    </label>
+
+                    <input asp-for="SearchPlaceholder" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-card">
+
+            <h2>
+                🎴 Cards principais
+            </h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Emoji 1
+                    </label>
+
+                    <input asp-for="Feature1Emoji" />
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Título 1
+                    </label>
+
+                    <input asp-for="Feature1Title" />
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>
+                        Texto 1
+                    </label>
+
+                    <textarea asp-for="Feature1Text"></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Emoji 2
+                    </label>
+
+                    <input asp-for="Feature2Emoji" />
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Título 2
+                    </label>
+
+                    <input asp-for="Feature2Title" />
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>
+                        Texto 2
+                    </label>
+
+                    <textarea asp-for="Feature2Text"></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Emoji 3
+                    </label>
+
+                    <input asp-for="Feature3Emoji" />
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Título 3
+                    </label>
+
+                    <input asp-for="Feature3Title" />
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>
+                        Texto 3
+                    </label>
+
+                    <textarea asp-for="Feature3Text"></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Emoji 4
+                    </label>
+
+                    <input asp-for="Feature4Emoji" />
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Título 4
+                    </label>
+
+                    <input asp-for="Feature4Title" />
+
+                </div>
+
+                <div class="form-group full">
+
+                    <label>
+                        Texto 4
+                    </label>
+
+                    <textarea asp-for="Feature4Text"></textarea>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-card">
+
+            <h2>
+                👑 Planos
+            </h2>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label asp-for="FreeMonthlyLimit">
+                        Limite mensal gratuito
+                    </label>
+
+                    <input
+                        asp-for="FreeMonthlyLimit"
+                        type="number"
+                        min="0" />
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="PremiumMonthlyLimit">
+                        Limite mensal Premium
+                    </label>
+
+                    <input
+                        asp-for="PremiumMonthlyLimit"
+                        type="number"
+                        min="0" />
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="PremiumPrice">
+                        Preço Premium
+                    </label>
+
+                    <input
+                        asp-for="PremiumPrice"
+                        type="number"
+                        step="0.01"
+                        min="0" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-card">
+
+            <h2>
+                🔥 Receita em destaque
+            </h2>
+
+            <div class="form-grid">
+
+                <div class="form-group full">
+
+                    <label asp-for="FeaturedRecipeTitle">
+                        Nome da receita
+                    </label>
+
+                    <input asp-for="FeaturedRecipeTitle" />
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label asp-for="FeaturedRecipeImageUrl">
+                        URL da imagem
+                    </label>
+
+                    <input asp-for="FeaturedRecipeImageUrl" />
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="FeaturedRecipeCountry">
+                        País / origem
+                    </label>
+
+                    <input asp-for="FeaturedRecipeCountry" />
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="FeaturedRecipeMinutes">
+                        Tempo
+                    </label>
+
+                    <input
+                        asp-for="FeaturedRecipeMinutes"
+                        type="number" />
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="FeaturedRecipeServings">
+                        Porções
+                    </label>
+
+                    <input
+                        asp-for="FeaturedRecipeServings"
+                        type="number" />
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-save">
+
+            <button type="submit">
+
+                💾 Salvar configurações
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>

@@ -1,0 +1,551 @@
+﻿@model List<chefeia.Models.AdminUsuarioViewModel>
+
+@{
+    ViewData["Title"] = "Usuários";
+
+    var totalUsuarios = Model.Count;
+
+    var totalFree =
+        Model.Count(
+            x => x.PlanCode == "FREE"
+        );
+
+    var totalPremium =
+        Model.Count(
+            x => x.PlanCode == "PREMIUM"
+        );
+}
+
+<style>
+
+    body {
+        background: #f5f1eb;
+    }
+
+    .users-admin {
+        max-width: 1250px;
+        margin: 35px auto 80px;
+        padding: 0 20px;
+    }
+
+    .users-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .users-header h1 {
+        margin: 0;
+        color: #2b170d;
+        font-size: 34px;
+    }
+
+    .users-header p {
+        margin: 7px 0 0;
+        color: #786a60;
+    }
+
+    .back-button {
+        text-decoration: none;
+        background: #2b170d;
+        color: white;
+        padding: 11px 16px;
+        border-radius: 10px;
+        font-weight: 800;
+    }
+
+    .success {
+        margin-bottom: 20px;
+        padding: 14px 18px;
+        border-radius: 11px;
+        background: #edf9eb;
+        color: #347b35;
+    }
+
+    .users-summary {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .summary-card {
+        background: white;
+        border: 1px solid #eadfd4;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow:
+            0 10px 35px rgba(50,30,17,.05);
+    }
+
+    .summary-card span {
+        display: block;
+        color: #786a60;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 7px;
+    }
+
+    .summary-card strong {
+        color: #2b170d;
+        font-size: 30px;
+    }
+
+    .users-box {
+        background: white;
+        border: 1px solid #eadfd4;
+        border-radius: 22px;
+        overflow: hidden;
+        box-shadow:
+            0 10px 35px rgba(50,30,17,.05);
+    }
+
+    .users-box-header {
+        padding: 23px 25px;
+        border-bottom: 1px solid #eee5dd;
+    }
+
+    .users-box-header h2 {
+        margin: 0;
+        color: #2b170d;
+        font-size: 20px;
+    }
+
+    .users-box-header p {
+        margin: 5px 0 0;
+        color: #786a60;
+        font-size: 13px;
+    }
+
+    .table-scroll {
+        overflow-x: auto;
+    }
+
+    .users-table {
+        width: 100%;
+        min-width: 1000px;
+        border-collapse: collapse;
+    }
+
+    .users-table th {
+        text-align: left;
+        padding: 13px 16px;
+        background: #faf7f3;
+        color: #786a60;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .users-table td {
+        padding: 15px 16px;
+        border-top: 1px solid #f1ebe5;
+        color: #49392f;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .user-name {
+        font-weight: 800;
+        color: #2b170d;
+    }
+
+    .user-email {
+        display: block;
+        margin-top: 3px;
+        color: #8b7d73;
+        font-size: 12px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .badge-free {
+        background: #edf8eb;
+        color: #347b35;
+    }
+
+    .badge-premium {
+        background: #fff0e4;
+        color: #d84f09;
+    }
+
+    .badge-admin {
+        background: #eee7ff;
+        color: #6542a6;
+        margin-left: 5px;
+    }
+
+    .badge-active {
+        background: #edf8eb;
+        color: #347b35;
+    }
+
+    .badge-inactive {
+        background: #fff0ee;
+        color: #b33b30;
+    }
+
+    .usage-text {
+        font-weight: 800;
+        color: #2b170d;
+    }
+
+    .usage-sub {
+        display: block;
+        margin-top: 3px;
+        color: #8b7e74;
+        font-size: 11px;
+    }
+
+    .user-actions {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        display: inline-block;
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .action-edit {
+        background: #2b170d;
+        color: white;
+    }
+
+    .action-password {
+        background: #f5661b;
+        color: white;
+    }
+
+    .empty {
+        padding: 50px 25px;
+        text-align: center;
+        color: #8b7e74;
+    }
+
+    @@media(max-width: 850px) {
+
+        .users-summary {
+            grid-template-columns: 1fr;
+        }
+
+        .users-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+</style>
+
+
+<div class="users-admin">
+
+    <div class="users-header">
+
+        <div>
+
+            <h1>
+                👥 Usuários
+            </h1>
+
+            <p>
+                Gerencie contas gratuitas, Premium
+                e administradores.
+            </p>
+
+        </div>
+
+
+        <a
+            asp-controller="Admin"
+            asp-action="Index"
+            class="back-button">
+
+            ← Painel
+
+        </a>
+
+    </div>
+
+
+    @if (TempData["Sucesso"] != null)
+    {
+        <div class="success">
+            ✅ @TempData["Sucesso"]
+        </div>
+    }
+
+
+    <div class="users-summary">
+
+        <div class="summary-card">
+
+            <span>
+                TOTAL DE USUÁRIOS
+            </span>
+
+            <strong>
+                @totalUsuarios
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>
+                🌿 GRATUITO
+            </span>
+
+            <strong>
+                @totalFree
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span>
+                👑 PREMIUM
+            </span>
+
+            <strong>
+                @totalPremium
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <section class="users-box">
+
+        <div class="users-box-header">
+
+            <h2>
+                Contas cadastradas
+            </h2>
+
+            <p>
+                Altere plano, status, dados e senha.
+            </p>
+
+        </div>
+
+
+        @if (Model.Count == 0)
+        {
+            <div class="empty">
+
+                👨‍🍳
+
+                <br /><br />
+
+                Nenhum usuário cadastrado.
+
+            </div>
+        }
+        else
+        {
+            <div class="table-scroll">
+
+                <table class="users-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Usuário
+                            </th>
+
+                            <th>
+                                Plano
+                            </th>
+
+                            <th>
+                                Consultas
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Cadastro
+                            </th>
+
+                            <th>
+                                Último acesso
+                            </th>
+
+                            <th>
+                                Ações
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+
+                                    <span class="user-name">
+                                        @item.Name
+                                    </span>
+
+
+                                    @if (item.IsAdmin)
+                                    {
+                                        <span class="badge badge-admin">
+                                            ADMIN
+                                        </span>
+                                    }
+
+
+                                    <span class="user-email">
+                                        @item.Email
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (item.PlanCode == "PREMIUM")
+                                    {
+                                        <span class="badge badge-premium">
+                                            👑 Premium
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-free">
+                                            🌿 Gratuito
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <span class="usage-text">
+                                        @item.ConsultasUsadasMes
+                                        /
+                                        @item.LimiteMensal
+                                    </span>
+
+                                    <span class="usage-sub">
+                                        @item.ConsultasRestantes restantes
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge badge-active">
+                                            ✓ Ativo
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-inactive">
+                                            ✕ Desativado
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+                                    @(item.CreatedAt
+                                        .ToLocalTime()
+                                        .ToString("dd/MM/yyyy"))
+                                </td>
+
+
+                                <td>
+
+                                    @if (item.LastLoginAt.HasValue)
+                                    {
+                                        @(item.LastLoginAt.Value
+                                            .ToLocalTime()
+                                            .ToString("dd/MM/yyyy HH:mm"))
+                                    }
+                                    else
+                                    {
+                                        <span>
+                                            Nunca
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="user-actions">
+
+                                        <a
+                                            asp-controller="Admin"
+                                            asp-action="EditarUsuario"
+                                            asp-route-id="@item.Id"
+                                            class="action-btn action-edit">
+
+                                            ✏️ Editar
+
+                                        </a>
+
+
+                                        <a
+                                            asp-controller="Admin"
+                                            asp-action="ResetSenha"
+                                            asp-route-id="@item.Id"
+                                            class="action-btn action-password">
+
+                                            🔑 Senha
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </section>
+
+</div>
