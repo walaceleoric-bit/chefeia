@@ -54,8 +54,16 @@ namespace chefeia.Services.AI
             }
 
             // =====================================================
-            // 2. DADOS DO USUÁRIO
+            // 2. DADOS INFORMADOS PELO USUÁRIO
             // =====================================================
+
+            if (consulta.Ingredientes == null ||
+                consulta.Ingredientes.Count == 0)
+            {
+                throw new ArgumentException(
+                    "Informe pelo menos um ingrediente."
+                );
+            }
 
             var ingredientes = string.Join(
                 ", ",
@@ -83,7 +91,7 @@ namespace chefeia.Services.AI
             );
 
             // =====================================================
-            // 4. CORPO DA REQUISIÇÃO
+            // 4. CORPO DA NOVA API
             // =====================================================
 
             var corpoRequisicao = new
@@ -97,6 +105,19 @@ namespace chefeia.Services.AI
                     }
                 },
 
+                system_prompt =
+                    "Você é o Chefe IA, um assistente especializado em culinária. " +
+                    "Responda sempre em português do Brasil e siga exatamente " +
+                    "o formato solicitado pelo usuário.",
+
+                temperature = 0.7,
+
+                top_k = 5,
+
+                top_p = 0.9,
+
+                max_tokens = 1200,
+
                 web_access = false
             };
 
@@ -104,7 +125,7 @@ namespace chefeia.Services.AI
                 JsonSerializer.Serialize(corpoRequisicao);
 
             // =====================================================
-            // 5. REQUISIÇÃO HTTP
+            // 5. CRIAR REQUISIÇÃO
             // =====================================================
 
             using var request = new HttpRequestMessage(
@@ -129,7 +150,7 @@ namespace chefeia.Services.AI
             );
 
             // =====================================================
-            // 6. LOG ANTES DA CONSULTA
+            // 6. LOG
             // =====================================================
 
             _logger.LogInformation(
@@ -159,7 +180,7 @@ namespace chefeia.Services.AI
                 Stopwatch.StartNew();
 
             // =====================================================
-            // 7. ENVIAR PARA RAPIDAPI
+            // 7. CHAMAR RAPIDAPI
             // =====================================================
 
             HttpResponseMessage response;
@@ -175,7 +196,7 @@ namespace chefeia.Services.AI
 
                 _logger.LogError(
                     ex,
-                    "Falha de comunicação com a RapidAPI."
+                    "Falha ao comunicar com a RapidAPI."
                 );
 
                 throw;
@@ -237,7 +258,7 @@ namespace chefeia.Services.AI
                 }
 
                 // =================================================
-                // 10. LER CAMPO result
+                // 10. INTERPRETAR RESPOSTA DA RAPIDAPI
                 // =================================================
 
                 using var documento =
@@ -246,9 +267,23 @@ namespace chefeia.Services.AI
                 var raiz =
                     documento.RootElement;
 
+                if (raiz.TryGetProperty(
+                        "status",
+                        out var statusElement))
+                {
+                    if (
+                        statusElement.ValueKind ==
+                        JsonValueKind.False)
+                    {
+                        throw new InvalidOperationException(
+                            "A RapidAPI informou que a consulta não foi concluída."
+                        );
+                    }
+                }
+
                 if (!raiz.TryGetProperty(
-                    "result",
-                    out var resultElement))
+                        "result",
+                        out var resultElement))
                 {
                     throw new InvalidOperationException(
                         "A RapidAPI respondeu, mas não retornou o campo 'result'."
@@ -294,6 +329,11 @@ namespace chefeia.Services.AI
                 }
                 catch (JsonException ex)
                 {
+                    _logger.LogError(
+                        ex,
+                        "JSON inválido retornado pela IA."
+                    );
+
                     throw new InvalidOperationException(
                         "A IA respondeu, mas a receita não veio em JSON válido.",
                         ex
@@ -327,7 +367,7 @@ namespace chefeia.Services.AI
         }
 
         // =========================================================
-        // MOSTRAR LIMITES DA RAPIDAPI
+        // LIMITES E CRÉDITOS DA RAPIDAPI
         // =========================================================
 
         private void MostrarLimitesRapidApi(
@@ -344,7 +384,8 @@ namespace chefeia.Services.AI
                     nome.Contains("ratelimit") ||
                     nome.Contains("rate-limit") ||
                     nome.Contains("quota") ||
-                    nome.Contains("remaining"))
+                    nome.Contains("remaining") ||
+                    nome.Contains("credit"))
                 {
                     encontrouLimite = true;
 
@@ -365,7 +406,7 @@ namespace chefeia.Services.AI
         }
 
         // =========================================================
-        // MONTAR PROMPT
+        // PROMPT DO CHEFE IA
         // =========================================================
 
         private static string MontarPrompt(
@@ -377,19 +418,13 @@ namespace chefeia.Services.AI
                 new StringBuilder();
 
             prompt.AppendLine(
-                "Você é o Chefe IA, um especialista em culinária."
+                "Crie UMA receita culinária usando principalmente os ingredientes abaixo."
             );
 
             prompt.AppendLine();
 
             prompt.AppendLine(
-                "Crie UMA receita usando principalmente os ingredientes informados."
-            );
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "Ingredientes disponíveis:"
+                "INGREDIENTES DISPONÍVEIS:"
             );
 
             prompt.AppendLine(
@@ -399,24 +434,28 @@ namespace chefeia.Services.AI
             prompt.AppendLine();
 
             prompt.AppendLine(
-                "Preferência: " + preferencia
+                "PREFERÊNCIA: " + preferencia
             );
 
             prompt.AppendLine(
-                "Número de porções: " + porcoes
+                "PORÇÕES: " + porcoes
             );
 
             prompt.AppendLine();
 
             prompt.AppendLine(
                 "Você pode acrescentar ingredientes básicos necessários, " +
-                "como sal, açúcar, água, óleo, manteiga e temperos."
+                "como sal, açúcar, água, óleo, azeite, manteiga e temperos."
             );
 
             prompt.AppendLine();
 
             prompt.AppendLine(
-                "A receita deve ser prática, coerente e segura."
+                "Não invente processos culinários perigosos ou incoerentes."
+            );
+
+            prompt.AppendLine(
+                "A receita deve ser prática, clara e possível de preparar."
             );
 
             prompt.AppendLine();
@@ -430,7 +469,7 @@ namespace chefeia.Services.AI
             );
 
             prompt.AppendLine(
-                "Não use blocos de código."
+                "Não escreva ```json."
             );
 
             prompt.AppendLine(
@@ -440,7 +479,7 @@ namespace chefeia.Services.AI
             prompt.AppendLine();
 
             prompt.AppendLine(
-                "O JSON deve possuir exatamente estes campos:"
+                "Use exatamente estes campos:"
             );
 
             prompt.AppendLine(
@@ -451,7 +490,7 @@ namespace chefeia.Services.AI
             prompt.AppendLine();
 
             prompt.AppendLine(
-                "Exemplo do formato esperado:"
+                "Formato esperado:"
             );
 
             prompt.AppendLine("{");
@@ -461,15 +500,15 @@ namespace chefeia.Services.AI
             );
 
             prompt.AppendLine(
-                "  \"descricao\": \"Descrição curta\","
+                "  \"descricao\": \"Descrição curta da receita\","
             );
 
             prompt.AppendLine(
-                "  \"pais\": \"Brasil\","
+                "  \"pais\": \"País ou origem culinária\","
             );
 
             prompt.AppendLine(
-                "  \"categoria\": \"Prato principal\","
+                "  \"categoria\": \"Categoria da receita\","
             );
 
             prompt.AppendLine(
@@ -485,11 +524,11 @@ namespace chefeia.Services.AI
             );
 
             prompt.AppendLine(
-                "    \"500 g de ingrediente\","
+                "    \"Ingrediente com quantidade\","
             );
 
             prompt.AppendLine(
-                "    \"1 unidade de outro ingrediente\""
+                "    \"Outro ingrediente com quantidade\""
             );
 
             prompt.AppendLine(
@@ -518,7 +557,7 @@ namespace chefeia.Services.AI
         }
 
         // =========================================================
-        // LIMPAR JSON RETORNADO PELA IA
+        // LIMPAR JSON
         // =========================================================
 
         private static string LimparJson(
