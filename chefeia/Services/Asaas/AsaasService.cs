@@ -249,15 +249,6 @@ namespace chefeia.Services.Asaas
 
             // =================================================
             // GARANTIR CLIENTE NO ASAAS
-            //
-            // Mantemos o cliente cadastrado no Asaas
-            // para relacionamento interno.
-            //
-            // Porém NÃO vamos enviar esse customer
-            // para o Checkout agora, porque ele ainda
-            // não possui CPF/endereço completos.
-            //
-            // O próprio Checkout solicitará esses dados.
             // =================================================
 
             var customerId =
@@ -303,7 +294,7 @@ namespace chefeia.Services.Asaas
                             "PENDING",
 
                         BillingType =
-                            "CREDIT_CARD",
+                            "PIX_OR_CREDIT_CARD",
 
                         IsActive =
                             false,
@@ -334,7 +325,7 @@ namespace chefeia.Services.Asaas
                     "PENDING";
 
                 assinatura.BillingType =
-                    "CREDIT_CARD";
+                    "PIX_OR_CREDIT_CARD";
 
                 assinatura.IsActive =
                     false;
@@ -365,19 +356,13 @@ namespace chefeia.Services.Asaas
             // =================================================
             // CHECKOUT
             //
-            // NÃO enviamos customerData.
-            // NÃO enviamos customer.
+            // Formas disponíveis:
             //
-            // Assim o próprio Asaas pede ao pagador:
+            // PIX
+            // CARTÃO DE CRÉDITO
             //
-            // CPF/CNPJ
-            // telefone
-            // CEP
-            // endereço
-            // número
-            // bairro
-            //
-            // diretamente na página segura do Checkout.
+            // O próprio Checkout do Asaas solicitará
+            // os dados necessários do pagador.
             // =================================================
 
             var body =
@@ -386,6 +371,7 @@ namespace chefeia.Services.Asaas
                     billingTypes =
                         new[]
                         {
+                            "PIX",
                             "CREDIT_CARD"
                         },
 
