@@ -1,0 +1,263 @@
+﻿@model IEnumerable<chefeia.Models.Receita>
+
+@{
+    ViewData["Title"] = "Chefe IA";
+}
+
+<link rel="stylesheet" href="~/css/home.css" />
+
+<section class="hero">
+
+    <div class="hero-content">
+
+        <span class="hero-badge">
+            ✨ Seu chef inteligente
+        </span>
+
+        <h1>
+            O que vamos cozinhar hoje?
+        </h1>
+
+        <p>
+            Digite um ingrediente e descubra receitas
+            do mundo inteiro.
+        </p>
+
+        <div class="search-box">
+
+            <input id="ingredienteBusca"
+                   type="text"
+                   placeholder="Ex: leite condensado..." />
+
+            <button id="btnBuscar">
+                🔍 Encontrar receitas
+            </button>
+
+        </div>
+
+        <div id="resultadoBusca" class="resultado-busca"></div>
+
+    </div>
+
+</section>
+
+<section class="section" id="secaoResultados" style="display: none;">
+
+    <h2>🔎 Resultado da busca</h2>
+
+    <div id="receitasEncontradas" class="recipes-grid"></div>
+
+</section>
+
+
+<section class="section">
+
+    <h2>🌎 Explore sabores pelo mundo</h2>
+
+    <div class="countries">
+
+        <button>🇧🇷 <span>Brasil</span></button>
+
+        <button>🇮🇹 <span>Itália</span></button>
+
+        <button>🇲🇽 <span>México</span></button>
+
+        <button>🇯🇵 <span>Japão</span></button>
+
+        <button>🇫🇷 <span>França</span></button>
+
+        <button>🇵🇹 <span>Portugal</span></button>
+
+    </div>
+
+</section>
+
+
+<section class="section ingredient-section">
+
+    <h2>🥕 O que você tem em casa?</h2>
+
+    <p>
+        Informe seus ingredientes e nosso Chefe IA
+        vai ajudar você a descobrir o que preparar.
+    </p>
+
+   <section class="section ingredient-section">
+
+    <h2>🥕 O que você tem em casa?</h2>
+
+    <p>
+        Adicione os ingredientes disponíveis e deixe o Chefe IA sugerir uma receita.
+    </p>
+
+    <div class="ingredients-box">
+
+        <input
+            id="ingredienteIA"
+            type="text"
+            placeholder="Ex: leite condensado..." />
+
+        <button
+            id="btnAdicionarIngrediente"
+            type="button">
+            + Adicionar ingrediente
+        </button>
+
+    </div>
+
+    <div id="listaIngredientes" class="lista-ingredientes"></div>
+
+    <div class="preferencias-ia">
+
+        <div>
+            <label for="preferenciaIA">
+                Preferência
+            </label>
+
+            <select id="preferenciaIA">
+                <option value="">Qualquer</option>
+                <option value="sobremesa">Sobremesa</option>
+                <option value="bolo">Bolo</option>
+                <option value="doce">Doce</option>
+                <option value="salgado">Salgado</option>
+                <option value="rápido">Rápido</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="porcoesIA">
+                Porções
+            </label>
+
+            <input
+                id="porcoesIA"
+                type="number"
+                value="4"
+                min="1"
+                max="20" />
+        </div>
+
+    </div>
+
+    <button
+        id="btnDescobrirIA"
+        class="ai-button"
+        type="button">
+        ✨ Descobrir com Chefe IA
+    </button>
+
+    <small>
+        3 consultas inteligentes gratuitas por mês
+    </small>
+
+    <div id="statusIA"></div>
+
+</section>
+
+
+<section
+    class="section"
+    id="resultadoIA"
+    style="display: none;">
+
+    <h2>✨ Sugestão do Chefe IA</h2>
+
+    <div class="receita-ia-card">
+
+        <span id="paisReceitaIA"></span>
+
+        <h3 id="nomeReceitaIA"></h3>
+
+        <p id="descricaoReceitaIA"></p>
+
+        <div class="receita-ia-info">
+
+            <span id="categoriaReceitaIA"></span>
+
+            <span id="tempoReceitaIA"></span>
+
+            <span id="porcoesReceitaIA"></span>
+
+        </div>
+
+        <div class="receita-ia-conteudo">
+
+            <div>
+                <h4>Ingredientes</h4>
+
+                <ul id="ingredientesReceitaIA"></ul>
+            </div>
+
+            <div>
+                <h4>Modo de preparo</h4>
+
+                <ol id="passosReceitaIA"></ol>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="section">
+
+    <h2>🔥 Receitas em destaque</h2>
+
+    <div class="recipes-grid">
+
+        @foreach (var receita in Model)
+        {
+            <article class="recipe-card">
+
+                <img src="@receita.ImagemUrl"
+                     alt="@receita.Nome" />
+
+                <div class="recipe-info">
+
+                    <span class="country">
+                        @receita.Bandeira @receita.Pais
+                    </span>
+
+                    <h3>
+                        @receita.Nome
+                    </h3>
+
+                    <p>
+                        @receita.Descricao
+                    </p>
+
+                    <div class="recipe-details">
+
+                        <span>
+                            ⏱ @receita.TempoPreparoMinutos min
+                        </span>
+
+                        <span>
+                            👨‍🍳 @receita.Dificuldade
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </article>
+        }
+
+    </div>
+
+</section>
+
+
+<section class="ad-section">
+
+    <span>Publicidade</span>
+
+    <div>
+        Espaço reservado para anúncio
+    </div>
+
+</section>
+
+<script src="~/js/home.js"></script>

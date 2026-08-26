@@ -1,0 +1,14 @@
+@ChefeIA_HostAddress = https://localhost:7142
+
+POST {{ChefeIA_HostAddress}}/api/ai/sugerir-receita
+Content-Type: application/json
+
+{
+  "ingredientes": [
+    "leite condensado",
+    "coco",
+    "ovos"
+  ],
+  "preferencia": "sobremesa",
+  "porcoes": 4
+}
