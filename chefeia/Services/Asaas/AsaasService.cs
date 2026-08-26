@@ -44,8 +44,7 @@ namespace chefeia.Services.Asaas
                     .UserSubscriptions
                     .FirstOrDefaultAsync(
                         x =>
-                            x.UserId ==
-                            usuario.Id,
+                            x.UserId == usuario.Id,
                         cancellationToken
                     );
 
@@ -55,8 +54,7 @@ namespace chefeia.Services.Asaas
                 !string.IsNullOrWhiteSpace(
                     assinatura.AsaasCustomerId))
             {
-                return assinatura
-                    .AsaasCustomerId;
+                return assinatura.AsaasCustomerId;
             }
 
 
@@ -199,9 +197,8 @@ namespace chefeia.Services.Asaas
             }
             else
             {
-                assinatura
-                    .AsaasCustomerId =
-                        customerId;
+                assinatura.AsaasCustomerId =
+                    customerId;
             }
 
 
@@ -217,6 +214,11 @@ namespace chefeia.Services.Asaas
 
         // =====================================================
         // CRIAR CHECKOUT PREMIUM
+        //
+        // PIX AVULSO
+        //
+        // O pagamento libera 30 dias de Premium.
+        // A renovação será tratada depois.
         // =====================================================
 
         public async Task<string> CriarCheckoutPremiumAsync(
@@ -248,7 +250,7 @@ namespace chefeia.Services.Asaas
 
 
             // =================================================
-            // GARANTIR CLIENTE NO ASAAS
+            // GARANTIR CLIENTE ASAAS
             // =================================================
 
             var customerId =
@@ -259,7 +261,7 @@ namespace chefeia.Services.Asaas
 
 
             // =================================================
-            // REGISTRO LOCAL DA ASSINATURA
+            // REGISTRO LOCAL
             // =================================================
 
             var assinatura =
@@ -267,8 +269,7 @@ namespace chefeia.Services.Asaas
                     .UserSubscriptions
                     .FirstOrDefaultAsync(
                         x =>
-                            x.UserId ==
-                            usuario.Id,
+                            x.UserId == usuario.Id,
                         cancellationToken
                     );
 
@@ -294,7 +295,7 @@ namespace chefeia.Services.Asaas
                             "PENDING",
 
                         BillingType =
-                            "PIX_OR_CREDIT_CARD",
+                            "PIX",
 
                         IsActive =
                             false,
@@ -325,7 +326,7 @@ namespace chefeia.Services.Asaas
                     "PENDING";
 
                 assinatura.BillingType =
-                    "PIX_OR_CREDIT_CARD";
+                    "PIX";
 
                 assinatura.IsActive =
                     false;
@@ -342,27 +343,12 @@ namespace chefeia.Services.Asaas
 
 
             // =================================================
-            // DATAS DA ASSINATURA
-            // =================================================
-
-            var hoje =
-                DateTime.UtcNow.Date;
-
-
-            var dataFinal =
-                hoje.AddYears(10);
-
-
-            // =================================================
-            // CHECKOUT
+            // CHECKOUT PIX
             //
-            // Formas disponíveis:
+            // DETACHED = cobrança avulsa.
             //
-            // PIX
-            // CARTÃO DE CRÉDITO
-            //
-            // O próprio Checkout do Asaas solicitará
-            // os dados necessários do pagador.
+            // NÃO enviamos customerData para que o próprio
+            // Checkout do Asaas peça CPF, telefone e endereço.
             // =================================================
 
             var body =
@@ -371,14 +357,13 @@ namespace chefeia.Services.Asaas
                     billingTypes =
                         new[]
                         {
-                            "PIX",
-                            "CREDIT_CARD"
+                            "PIX"
                         },
 
                     chargeTypes =
                         new[]
                         {
-                            "RECURRENT"
+                            "DETACHED"
                         },
 
                     minutesToExpire =
@@ -409,7 +394,7 @@ namespace chefeia.Services.Asaas
                                     "Chefe IA Premium",
 
                                 description =
-                                    "Assinatura mensal do Chefe IA Premium",
+                                    "Acesso ao Chefe IA Premium por 30 dias",
 
                                 quantity =
                                     1,
@@ -417,23 +402,6 @@ namespace chefeia.Services.Asaas
                                 value =
                                     preco
                             }
-                        },
-
-                    subscription =
-                        new
-                        {
-                            cycle =
-                                "MONTHLY",
-
-                            nextDueDate =
-                                hoje.ToString(
-                                    "yyyy-MM-dd"
-                                ),
-
-                            endDate =
-                                dataFinal.ToString(
-                                    "yyyy-MM-dd"
-                                )
                         }
                 };
 
@@ -538,7 +506,7 @@ namespace chefeia.Services.Asaas
 
 
             _logger.LogInformation(
-                "Checkout Premium criado com sucesso. Usuário {UserId}. Checkout {CheckoutId}.",
+                "Checkout PIX Premium criado. Usuário {UserId}. Checkout {CheckoutId}.",
                 usuario.Id,
                 checkoutId
             );
