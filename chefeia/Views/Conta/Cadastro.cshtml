@@ -103,6 +103,60 @@
             0 0 0 3px rgba(245,102,27,.10);
     }
 
+    /* =====================================================
+       CAMPO DE SENHA COM OLHINHO
+    ===================================================== */
+
+    .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+
+    .password-wrapper input {
+        width: 100%;
+
+        box-sizing: border-box;
+
+        padding-right: 52px;
+    }
+
+    .password-toggle {
+        position: absolute;
+
+        top: 50%;
+        right: 11px;
+
+        transform: translateY(-50%);
+
+        width: 36px;
+        height: 36px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 0;
+        border-radius: 8px;
+
+        background: transparent;
+
+        color: #6f5e53;
+
+        cursor: pointer;
+
+        font-size: 18px;
+
+        transition: .2s;
+    }
+
+    .password-toggle:hover {
+        background: #f5eee7;
+    }
+
+    .password-toggle:focus {
+        outline: 2px solid rgba(245,102,27,.25);
+    }
+
     .register-button {
         width: 100%;
 
@@ -120,6 +174,10 @@
         font-weight: 900;
 
         cursor: pointer;
+    }
+
+    .register-button:hover {
+        background: #dc5510;
     }
 
     .login-link {
@@ -254,11 +312,27 @@
                     Senha
                 </label>
 
-                <input
-                    asp-for="Password"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder="Crie uma senha" />
+                <div class="password-wrapper">
+
+                    <input
+                        asp-for="Password"
+                        id="Password"
+                        type="password"
+                        autocomplete="new-password"
+                        placeholder="Crie uma senha" />
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="Password"
+                        aria-label="Mostrar senha"
+                        title="Mostrar senha">
+
+                        👁️
+
+                    </button>
+
+                </div>
 
                 <span
                     asp-validation-for="Password">
@@ -273,11 +347,27 @@
                     Confirmar senha
                 </label>
 
-                <input
-                    asp-for="ConfirmPassword"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder="Digite novamente" />
+                <div class="password-wrapper">
+
+                    <input
+                        asp-for="ConfirmPassword"
+                        id="ConfirmPassword"
+                        type="password"
+                        autocomplete="new-password"
+                        placeholder="Digite novamente" />
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="ConfirmPassword"
+                        aria-label="Mostrar senha"
+                        title="Mostrar senha">
+
+                        👁️
+
+                    </button>
+
+                </div>
 
                 <span
                     asp-validation-for="ConfirmPassword">
@@ -314,3 +404,93 @@
     </div>
 
 </div>
+
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            const botoes =
+                document.querySelectorAll(
+                    ".password-toggle"
+                );
+
+
+            botoes.forEach(
+                function (botao) {
+
+                    botao.addEventListener(
+                        "click",
+                        function () {
+
+                            const targetId =
+                                botao.getAttribute(
+                                    "data-target"
+                                );
+
+
+                            const input =
+                                document.getElementById(
+                                    targetId
+                                );
+
+
+                            if (!input) {
+                                return;
+                            }
+
+
+                            if (
+                                input.type ===
+                                "password"
+                            ) {
+
+                                input.type =
+                                    "text";
+
+                                botao.textContent =
+                                    "🙈";
+
+                                botao.setAttribute(
+                                    "aria-label",
+                                    "Ocultar senha"
+                                );
+
+                                botao.setAttribute(
+                                    "title",
+                                    "Ocultar senha"
+                                );
+
+                            }
+                            else {
+
+                                input.type =
+                                    "password";
+
+                                botao.textContent =
+                                    "👁️";
+
+                                botao.setAttribute(
+                                    "aria-label",
+                                    "Mostrar senha"
+                                );
+
+                                botao.setAttribute(
+                                    "title",
+                                    "Mostrar senha"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+</script>
