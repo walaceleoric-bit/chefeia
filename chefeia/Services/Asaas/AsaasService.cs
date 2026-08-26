@@ -249,6 +249,15 @@ namespace chefeia.Services.Asaas
 
             // =================================================
             // GARANTIR CLIENTE NO ASAAS
+            //
+            // Mantemos o cliente cadastrado no Asaas
+            // para relacionamento interno.
+            //
+            // Porém NÃO vamos enviar esse customer
+            // para o Checkout agora, porque ele ainda
+            // não possui CPF/endereço completos.
+            //
+            // O próprio Checkout solicitará esses dados.
             // =================================================
 
             var customerId =
@@ -312,6 +321,9 @@ namespace chefeia.Services.Asaas
             }
             else
             {
+                assinatura.AsaasCustomerId =
+                    customerId;
+
                 assinatura.Price =
                     preco;
 
@@ -339,23 +351,33 @@ namespace chefeia.Services.Asaas
 
 
             // =================================================
-            // PRIMEIRO VENCIMENTO
-            //
-            // Hoje: pagamento inicial.
+            // DATAS DA ASSINATURA
             // =================================================
 
             var hoje =
                 DateTime.UtcNow.Date;
 
 
-            // Mantemos uma duração longa para a recorrência.
-            // Depois poderemos trocar por cancelamento explícito.
             var dataFinal =
                 hoje.AddYears(10);
 
 
             // =================================================
-            // BODY DO CHECKOUT
+            // CHECKOUT
+            //
+            // NÃO enviamos customerData.
+            // NÃO enviamos customer.
+            //
+            // Assim o próprio Asaas pede ao pagador:
+            //
+            // CPF/CNPJ
+            // telefone
+            // CEP
+            // endereço
+            // número
+            // bairro
+            //
+            // diretamente na página segura do Checkout.
             // =================================================
 
             var body =
@@ -409,19 +431,6 @@ namespace chefeia.Services.Asaas
                                 value =
                                     preco
                             }
-                        },
-
-                    customerData =
-                        new
-                        {
-                            name =
-                                string.IsNullOrWhiteSpace(
-                                    usuario.Name)
-                                    ? usuario.Email
-                                    : usuario.Name,
-
-                            email =
-                                usuario.Email
                         },
 
                     subscription =
@@ -494,6 +503,10 @@ namespace chefeia.Services.Asaas
             }
 
 
+            // =================================================
+            // LER RESPOSTA
+            // =================================================
+
             using var json =
                 JsonDocument.Parse(
                     conteudo
@@ -505,6 +518,12 @@ namespace chefeia.Services.Asaas
                     "id",
                     out var idElement))
             {
+                _logger.LogError(
+                    "Asaas respondeu ao Checkout sem campo id. Resposta: {Resposta}",
+                    conteudo
+                );
+
+
                 throw new InvalidOperationException(
                     "O Asaas não retornou o ID do Checkout."
                 );
@@ -525,7 +544,7 @@ namespace chefeia.Services.Asaas
 
 
             // =================================================
-            // MONTAR LINK
+            // LINK DO CHECKOUT
             // =================================================
 
             var checkoutUrl =
@@ -533,7 +552,7 @@ namespace chefeia.Services.Asaas
 
 
             _logger.LogInformation(
-                "Checkout Premium criado no Asaas. Usuário {UserId}. Checkout {CheckoutId}.",
+                "Checkout Premium criado com sucesso. Usuário {UserId}. Checkout {CheckoutId}.",
                 usuario.Id,
                 checkoutId
             );
@@ -586,6 +605,13 @@ namespace chefeia.Services.Asaas
                 .TryAddWithoutValidation(
                     "User-Agent",
                     "ChefeIA/1.0"
+                );
+
+
+            request.Headers
+                .TryAddWithoutValidation(
+                    "Accept",
+                    "application/json"
                 );
         }
     }
