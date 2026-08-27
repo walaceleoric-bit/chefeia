@@ -1,5 +1,7 @@
 ﻿@model List<chefeia.Models.AdminUsuarioViewModel>
 
+@using System.Security.Claims
+
 @{
     ViewData["Title"] = "Usuários";
 
@@ -13,6 +15,11 @@
     var totalPremium =
         Model.Count(
             x => x.PlanCode == "PREMIUM"
+        );
+
+    var usuarioAtualId =
+        User.FindFirstValue(
+            ClaimTypes.NameIdentifier
         );
 }
 
@@ -36,16 +43,16 @@
         margin-bottom: 25px;
     }
 
-    .users-header h1 {
-        margin: 0;
-        color: #2b170d;
-        font-size: 34px;
-    }
+        .users-header h1 {
+            margin: 0;
+            color: #2b170d;
+            font-size: 34px;
+        }
 
-    .users-header p {
-        margin: 7px 0 0;
-        color: #786a60;
-    }
+        .users-header p {
+            margin: 7px 0 0;
+            color: #786a60;
+        }
 
     .back-button {
         text-decoration: none;
@@ -56,18 +63,44 @@
         font-weight: 800;
     }
 
+        .back-button:hover {
+            color: white;
+            background: #422419;
+        }
+
+
+    /* =====================================================
+           MENSAGENS
+        ===================================================== */
+
     .success {
         margin-bottom: 20px;
         padding: 14px 18px;
         border-radius: 11px;
         background: #edf9eb;
+        border: 1px solid #d4ecd1;
         color: #347b35;
+        font-weight: 700;
     }
+
+    .error {
+        margin-bottom: 20px;
+        padding: 14px 18px;
+        border-radius: 11px;
+        background: #fff0ee;
+        border: 1px solid #f0d0cc;
+        color: #a7372d;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+           RESUMO
+        ===================================================== */
 
     .users-summary {
         display: grid;
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 18px;
         margin-bottom: 25px;
     }
@@ -77,30 +110,33 @@
         border: 1px solid #eadfd4;
         border-radius: 18px;
         padding: 22px;
-        box-shadow:
-            0 10px 35px rgba(50,30,17,.05);
+        box-shadow: 0 10px 35px rgba(50,30,17,.05);
     }
 
-    .summary-card span {
-        display: block;
-        color: #786a60;
-        font-size: 12px;
-        font-weight: 800;
-        margin-bottom: 7px;
-    }
+        .summary-card span {
+            display: block;
+            color: #786a60;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
 
-    .summary-card strong {
-        color: #2b170d;
-        font-size: 30px;
-    }
+        .summary-card strong {
+            color: #2b170d;
+            font-size: 30px;
+        }
+
+
+    /* =====================================================
+           TABELA
+        ===================================================== */
 
     .users-box {
         background: white;
         border: 1px solid #eadfd4;
         border-radius: 22px;
         overflow: hidden;
-        box-shadow:
-            0 10px 35px rgba(50,30,17,.05);
+        box-shadow: 0 10px 35px rgba(50,30,17,.05);
     }
 
     .users-box-header {
@@ -108,17 +144,17 @@
         border-bottom: 1px solid #eee5dd;
     }
 
-    .users-box-header h2 {
-        margin: 0;
-        color: #2b170d;
-        font-size: 20px;
-    }
+        .users-box-header h2 {
+            margin: 0;
+            color: #2b170d;
+            font-size: 20px;
+        }
 
-    .users-box-header p {
-        margin: 5px 0 0;
-        color: #786a60;
-        font-size: 13px;
-    }
+        .users-box-header p {
+            margin: 5px 0 0;
+            color: #786a60;
+            font-size: 13px;
+        }
 
     .table-scroll {
         overflow-x: auto;
@@ -126,27 +162,35 @@
 
     .users-table {
         width: 100%;
-        min-width: 1000px;
+        min-width: 1100px;
         border-collapse: collapse;
     }
 
-    .users-table th {
-        text-align: left;
-        padding: 13px 16px;
-        background: #faf7f3;
-        color: #786a60;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: .5px;
-    }
+        .users-table th {
+            text-align: left;
+            padding: 13px 16px;
+            background: #faf7f3;
+            color: #786a60;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
 
-    .users-table td {
-        padding: 15px 16px;
-        border-top: 1px solid #f1ebe5;
-        color: #49392f;
-        font-size: 13px;
-        vertical-align: middle;
-    }
+        .users-table td {
+            padding: 15px 16px;
+            border-top: 1px solid #f1ebe5;
+            color: #49392f;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        .users-table tbody tr {
+            transition: background .15s;
+        }
+
+            .users-table tbody tr:hover {
+                background: #fffaf6;
+            }
 
     .user-name {
         font-weight: 800;
@@ -159,6 +203,11 @@
         color: #8b7d73;
         font-size: 12px;
     }
+
+
+    /* =====================================================
+           BADGES
+        ===================================================== */
 
     .badge {
         display: inline-block;
@@ -206,36 +255,98 @@
         font-size: 11px;
     }
 
+
+    /* =====================================================
+           AÇÕES
+        ===================================================== */
+
     .user-actions {
         display: flex;
         gap: 7px;
         flex-wrap: wrap;
+        align-items: center;
     }
 
     .action-btn {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         text-decoration: none;
+        border: 0;
         border-radius: 8px;
         padding: 7px 10px;
         font-size: 11px;
         font-weight: 800;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: transform .15s, opacity .15s;
     }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
 
     .action-edit {
         background: #2b170d;
         color: white;
     }
 
+        .action-edit:hover {
+            color: white;
+        }
+
     .action-password {
         background: #f5661b;
         color: white;
     }
+
+        .action-password:hover {
+            color: white;
+        }
+
+    .action-delete {
+        background: #b9362c;
+        color: white;
+    }
+
+        .action-delete:hover {
+            background: #9d2d25;
+            color: white;
+        }
+
+    .delete-form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+    }
+
+    .current-user-info {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 10px;
+        border-radius: 8px;
+        background: #f1eee9;
+        color: #8a7b70;
+        font-size: 10px;
+        font-weight: 800;
+        cursor: default;
+    }
+
+
+    /* =====================================================
+           VAZIO
+        ===================================================== */
 
     .empty {
         padding: 50px 25px;
         text-align: center;
         color: #8b7e74;
     }
+
+
+    /* =====================================================
+           RESPONSIVO
+        ===================================================== */
 
     @@media(max-width: 850px) {
 
@@ -254,6 +365,11 @@
 
 <div class="users-admin">
 
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
     <div class="users-header">
 
         <div>
@@ -270,10 +386,9 @@
         </div>
 
 
-        <a
-            asp-controller="Admin"
-            asp-action="Index"
-            class="back-button">
+        <a asp-controller="Admin"
+           asp-action="Index"
+           class="back-button">
 
             ← Painel
 
@@ -282,6 +397,9 @@
     </div>
 
 
+    <!-- =====================================================
+         MENSAGENS
+    ====================================================== -->
     @if (TempData["Sucesso"] != null)
     {
         <div class="success">
@@ -289,6 +407,18 @@
         </div>
     }
 
+
+    @if (TempData["Erro"] != null)
+    {
+        <div class="error">
+            ⚠️ @TempData["Erro"]
+        </div>
+    }
+
+
+    <!-- =====================================================
+         RESUMO
+    ====================================================== -->
 
     <div class="users-summary">
 
@@ -333,6 +463,10 @@
     </div>
 
 
+    <!-- =====================================================
+         USUÁRIOS
+    ====================================================== -->
+
     <section class="users-box">
 
         <div class="users-box-header">
@@ -342,7 +476,8 @@
             </h2>
 
             <p>
-                Altere plano, status, dados e senha.
+                Altere plano, status, dados, senha
+                ou exclua contas.
             </p>
 
         </div>
@@ -409,6 +544,8 @@
                         {
                             <tr>
 
+                                <!-- USUÁRIO -->
+
                                 <td>
 
                                     <span class="user-name">
@@ -431,6 +568,8 @@
                                 </td>
 
 
+                                <!-- PLANO -->
+
                                 <td>
 
                                     @if (item.PlanCode == "PREMIUM")
@@ -449,12 +588,16 @@
                                 </td>
 
 
+                                <!-- CONSULTAS -->
+
                                 <td>
 
                                     <span class="usage-text">
+
                                         @item.ConsultasUsadasMes
                                         /
                                         @item.LimiteMensal
+
                                     </span>
 
                                     <span class="usage-sub">
@@ -463,6 +606,8 @@
 
                                 </td>
 
+
+                                <!-- STATUS -->
 
                                 <td>
 
@@ -482,12 +627,18 @@
                                 </td>
 
 
+                                <!-- CADASTRO -->
+
                                 <td>
+
                                     @(item.CreatedAt
                                         .ToLocalTime()
                                         .ToString("dd/MM/yyyy"))
+
                                 </td>
 
+
+                                <!-- ÚLTIMO ACESSO -->
 
                                 <td>
 
@@ -507,30 +658,61 @@
                                 </td>
 
 
+                                <!-- AÇÕES -->
+
                                 <td>
 
                                     <div class="user-actions">
 
-                                        <a
-                                            asp-controller="Admin"
-                                            asp-action="EditarUsuario"
-                                            asp-route-id="@item.Id"
-                                            class="action-btn action-edit">
+                                        <a asp-controller="Admin"
+                                           asp-action="EditarUsuario"
+                                           asp-route-id="@item.Id"
+                                           class="action-btn action-edit">
 
                                             ✏️ Editar
 
                                         </a>
 
 
-                                        <a
-                                            asp-controller="Admin"
-                                            asp-action="ResetSenha"
-                                            asp-route-id="@item.Id"
-                                            class="action-btn action-password">
+                                        <a asp-controller="Admin"
+                                           asp-action="ResetSenha"
+                                           asp-route-id="@item.Id"
+                                           class="action-btn action-password">
 
                                             🔑 Senha
 
                                         </a>
+
+
+                                        @if (item.Id != usuarioAtualId)
+                                        {
+                                            <form asp-controller="Admin"
+                                                  asp-action="ExcluirUsuario"
+                                                  method="post"
+                                                  class="delete-form"
+                                                  onsubmit="return confirm('Tem certeza que deseja excluir @item.Name? Esta ação é permanente e não poderá ser desfeita.');">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@item.Id" />
+
+                                                <button type="submit"
+                                                        class="action-btn action-delete">
+
+                                                    🗑️ Excluir
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="current-user-info">
+                                                🔒 Sua conta
+                                            </span>
+                                        }
 
                                     </div>
 

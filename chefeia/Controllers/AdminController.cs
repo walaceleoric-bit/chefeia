@@ -62,16 +62,7 @@ namespace chefeia.Controllers
                         premium?.Price ?? 0,
 
                     HeroTitle =
-                        settings.HeroTitle,
-
-                    HeroImageUrl =
-                        settings.HeroImageUrl,
-
-                    FeaturedRecipeTitle =
-                        settings.FeaturedRecipeTitle,
-
-                    FeaturedRecipeImageUrl =
-                        settings.FeaturedRecipeImageUrl
+                        settings.HeroTitle
                 };
 
             return View(model);
@@ -490,9 +481,6 @@ namespace chefeia.Controllers
                     .ToLowerInvariant();
 
 
-            // Verificar se o e-mail já pertence
-            // a outra conta.
-
             var usuarioComEmail =
                 await _userManager
                     .FindByEmailAsync(email);
@@ -510,7 +498,7 @@ namespace chefeia.Controllers
 
 
             // =================================================
-            // NÃO DEIXAR O ADMIN ATUAL SE BLOQUEAR
+            // PROTEGER O ADMIN ATUAL
             // =================================================
 
             var usuarioAtualId =
@@ -631,9 +619,6 @@ namespace chefeia.Controllers
             if (!model.IsAdmin &&
                 atualmenteAdmin)
             {
-                // Não permitir que o Admin logado
-                // retire a própria permissão.
-
                 if (editandoProprioUsuario)
                 {
                     ModelState.AddModelError(
@@ -657,6 +642,165 @@ namespace chefeia.Controllers
 
             return RedirectToAction(
                 nameof(Usuarios));
+        }
+
+
+        // =====================================================
+        // EXCLUIR USUÁRIO
+        // =====================================================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExcluirUsuario(
+            string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                TempData["Erro"] =
+                    "Usuário inválido.";
+
+                return RedirectToAction(
+                    nameof(Usuarios));
+            }
+
+
+            var usuarioAtualId =
+                User.FindFirstValue(
+                    ClaimTypes.NameIdentifier);
+
+
+            // Nunca permitir que o administrador logado
+            // exclua a própria conta.
+
+            if (usuarioAtualId == id)
+            {
+                TempData["Erro"] =
+                    "Você não pode excluir sua própria conta de administrador.";
+
+                return RedirectToAction(
+                    nameof(Usuarios));
+            }
+
+
+            var usuario =
+                await _userManager
+                    .FindByIdAsync(id);
+
+            if (usuario == null)
+            {
+                TempData["Erro"] =
+                    "O usuário não foi encontrado.";
+
+                return RedirectToAction(
+                    nameof(Usuarios));
+            }
+
+
+            // =================================================
+            // TRANSAÇÃO
+            // =================================================
+
+            await using var transaction =
+                await _dbContext.Database
+                    .BeginTransactionAsync();
+
+            try
+            {
+                // ---------------------------------------------
+                // CONSUMO DA IA
+                //
+                // AiUsage possui UserId, mas não está
+                // configurado com Cascade no AppDbContext.
+                // Portanto apagamos manualmente.
+                // ---------------------------------------------
+
+                var consumos =
+                    await _dbContext.AiUsages
+                        .Where(
+                            x => x.UserId == usuario.Id)
+                        .ToListAsync();
+
+                if (consumos.Count > 0)
+                {
+                    _dbContext.AiUsages
+                        .RemoveRange(consumos);
+
+                    await _dbContext
+                        .SaveChangesAsync();
+                }
+
+
+                // ---------------------------------------------
+                // HISTÓRICO E ASSINATURAS
+                //
+                // RecipeHistories e UserSubscriptions possuem
+                // DeleteBehavior.Cascade.
+                //
+                // Ao excluir o AppUser, esses registros serão
+                // removidos automaticamente pelo banco.
+                // ---------------------------------------------
+
+
+                // ---------------------------------------------
+                // WEBHOOK ASAAS
+                //
+                // NÃO apagamos AsaasWebhookEvents.
+                //
+                // Eles são registros técnicos/históricos de
+                // pagamento e não possuem FK com AppUser.
+                // ---------------------------------------------
+
+
+                // ---------------------------------------------
+                // ASP.NET IDENTITY
+                //
+                // DeleteAsync também cuida dos registros
+                // relacionados ao Identity, como roles,
+                // claims, logins e tokens.
+                // ---------------------------------------------
+
+                var resultado =
+                    await _userManager
+                        .DeleteAsync(usuario);
+
+                if (!resultado.Succeeded)
+                {
+                    await transaction
+                        .RollbackAsync();
+
+                    TempData["Erro"] =
+                        "Não foi possível excluir o usuário: " +
+                        string.Join(
+                            " ",
+                            resultado.Errors.Select(
+                                x => x.Description));
+
+                    return RedirectToAction(
+                        nameof(Usuarios));
+                }
+
+
+                await transaction
+                    .CommitAsync();
+
+
+                TempData["Sucesso"] =
+                    $"Usuário {usuario.Name} excluído com sucesso.";
+
+                return RedirectToAction(
+                    nameof(Usuarios));
+            }
+            catch (Exception)
+            {
+                await transaction
+                    .RollbackAsync();
+
+                TempData["Erro"] =
+                    "Não foi possível excluir o usuário. Verifique os dados relacionados à conta.";
+
+                return RedirectToAction(
+                    nameof(Usuarios));
+            }
         }
 
 
@@ -754,8 +898,6 @@ namespace chefeia.Controllers
             }
 
 
-            // Derruba sessões antigas do usuário
-            // na próxima validação do cookie.
             await _userManager
                 .UpdateSecurityStampAsync(
                     usuario);

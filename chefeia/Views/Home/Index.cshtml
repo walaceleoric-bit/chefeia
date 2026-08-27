@@ -30,24 +30,24 @@
 
         <p class="hero-subtitle">
             Adicione os ingredientes disponíveis e deixe o
-            Chefe IA criar uma receita personalizada para você.
+            Chefe IA analisar as melhores possibilidades para você.
         </p>
 
 
-        <!-- INGREDIENTES -->
+        <!-- =====================================================
+             FORMULÁRIO DA IA
+        ====================================================== -->
 
         <div class="hero-ai-box">
 
             <div class="hero-ingredient-input">
 
-                <input
-                    id="ingredienteIA"
-                    type="text"
-                    placeholder="Ex: ovo, arroz, queijo..." />
+                <input id="ingredienteIA"
+                       type="text"
+                       placeholder="Ex: ovo, arroz, queijo..." />
 
-                <button
-                    id="btnAdicionarIngrediente"
-                    type="button">
+                <button id="btnAdicionarIngrediente"
+                        type="button">
 
                     + Adicionar
 
@@ -56,9 +56,8 @@
             </div>
 
 
-            <div
-                id="listaIngredientes"
-                class="lista-ingredientes">
+            <div id="listaIngredientes"
+                 class="lista-ingredientes">
             </div>
 
 
@@ -115,22 +114,20 @@
                         👥 Porções
                     </label>
 
-                    <input
-                        id="porcoesIA"
-                        type="number"
-                        value="4"
-                        min="1"
-                        max="20" />
+                    <input id="porcoesIA"
+                           type="number"
+                           value="4"
+                           min="1"
+                           max="20" />
 
                 </div>
 
             </div>
 
 
-            <button
-                id="btnDescobrirIA"
-                class="hero-ai-button"
-                type="button">
+            <button id="btnDescobrirIA"
+                    class="hero-ai-button"
+                    type="button">
 
                 ✨ Criar minha receita
 
@@ -155,43 +152,71 @@
 
     </div>
 
-
-    <div class="hero-image-wrap">
-
-        <img
-            src="@Model.Settings.HeroImageUrl"
-            alt="@Model.Settings.SiteName" />
-
-        <div class="hero-image-overlay"></div>
+</section>
 
 
-        <div class="floating-emoji emoji-one">
+
+<!-- =========================================================
+     OPINIÃO / ORIENTAÇÃO DO CHEFE IA
+========================================================= -->
+
+<section class="section chef-opinion-section"
+         id="orientacaoIA"
+         style="display:none;">
+
+    <article class="chef-opinion-card">
+
+        <div class="chef-opinion-icon">
             👨‍🍳
         </div>
 
-        <div class="floating-emoji emoji-two">
-            🍅
-        </div>
 
-        <div class="floating-emoji emoji-three">
-            🌿
-        </div>
+        <div class="chef-opinion-content">
 
+            <span class="section-kicker"
+                  id="tituloOrientacaoIA">
 
-        <div class="hero-image-label">
+                OPINIÃO DO CHEFE IA
 
-            <span>
-                🔥 Criação inteligente
             </span>
 
-            <strong>
-                Você escolhe os ingredientes.
-                O Chefe IA faz o resto.
-            </strong>
+
+            <h2 id="subtituloOrientacaoIA">
+                Antes de cozinhar...
+            </h2>
+
+
+            <p id="mensagemOrientacaoIA">
+            </p>
+
+
+            <div id="blocoSugestoesIA"
+                 style="display:none;">
+
+                <h3>
+                    💡 Você pode melhorar adicionando:
+                </h3>
+
+                <ul id="sugestoesIA">
+                </ul>
+
+            </div>
+
+
+            <div class="chef-opinion-tip">
+
+                <strong>
+                    Dica:
+                </strong>
+
+                você pode adicionar mais ingredientes acima
+                e pedir uma nova análise.
+
+            </div>
 
         </div>
 
-    </div>
+    </article>
 
 </section>
 
@@ -201,10 +226,9 @@
      RESULTADO DA IA
 ========================================================= -->
 
-<section
-    class="section generated-section"
-    id="resultadoIA"
-    style="display:none;">
+<section class="section generated-section"
+         id="resultadoIA"
+         style="display:none;">
 
     <div class="section-heading">
 
@@ -234,9 +258,8 @@
 
             <div>
 
-                <span
-                    id="paisReceitaIA"
-                    class="generated-country">
+                <span id="paisReceitaIA"
+                      class="generated-country">
                 </span>
 
                 <h3 id="nomeReceitaIA">
@@ -398,7 +421,8 @@
             </h2>
 
             <p>
-                Da sua geladeira para uma nova receita em poucos passos.
+                Da sua geladeira para uma nova receita
+                em poucos passos.
             </p>
 
         </div>
@@ -441,12 +465,12 @@
             </div>
 
             <h3>
-                Gere
+                Analise
             </h3>
 
             <p>
-                Nossa IA analisa os ingredientes
-                e cria uma receita.
+                Nossa IA avalia os ingredientes
+                e encontra uma opção coerente.
             </p>
 
         </article>
@@ -467,8 +491,8 @@
             </h3>
 
             <p>
-                Siga os ingredientes e
-                o passo a passo.
+                Quando houver uma boa receita,
+                siga o passo a passo.
             </p>
 
         </article>
@@ -502,69 +526,11 @@
 
 
 <!-- =========================================================
-     RECEITA EM DESTAQUE
-========================================================= -->
-
-<section class="featured-section">
-
-    <div class="featured-image">
-
-        <img
-            src="@Model.Settings.FeaturedRecipeImageUrl"
-            alt="@Model.Settings.FeaturedRecipeTitle" />
-
-        <div class="featured-overlay"></div>
-
-    </div>
-
-
-    <div class="featured-content">
-
-        <span class="section-kicker light">
-            🔥 RECEITA EM DESTAQUE
-        </span>
-
-        <h2>
-            @Model.Settings.FeaturedRecipeTitle
-        </h2>
-
-        <span class="country-badge">
-
-            🌎
-            @Model.Settings.FeaturedRecipeCountry
-
-        </span>
-
-
-        <div class="featured-meta">
-
-            <span>
-                👥
-                @Model.Settings.FeaturedRecipeServings
-                porções
-            </span>
-
-            <span>
-                ⏱️
-                @Model.Settings.FeaturedRecipeMinutes
-                min
-            </span>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
      PLANOS
 ========================================================= -->
 
-<section
-    class="plans-section"
-    id="planos">
+<section class="plans-section"
+         id="planos">
 
     <div class="section-heading center">
 
@@ -746,10 +712,9 @@
             </div>
 
 
-            <a
-                asp-controller="Assinatura"
-                asp-action="Premium"
-                class="premium-button">
+            <a asp-controller="Assinatura"
+               asp-action="Premium"
+               class="premium-button">
 
                 👑 Assinar Premium
 
@@ -764,188 +729,116 @@
 
 
 <!-- =========================================================
-     EXPLORAR RECEITAS PRONTAS
+     ESTILO DA OPINIÃO DO CHEFE IA
 ========================================================= -->
 
-<section class="catalog-section">
+<style>
 
-    <div class="catalog-intro">
+    .chef-opinion-section {
+        max-width: 1180px;
+        margin: 45px auto;
+        padding: 0 24px;
+    }
 
-        <div>
+    .chef-opinion-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 24px;
+        padding: 32px;
+        background: #fffaf5;
+        border: 1px solid #eadfd4;
+        border-radius: 24px;
+        box-shadow: 0 14px 40px rgba(50, 30, 17, .08);
+    }
 
-            <span class="section-kicker">
-                🌎 EXPLORE
-            </span>
+    .chef-opinion-icon {
+        width: 72px;
+        height: 72px;
+        min-width: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        background: #f5661b;
+        font-size: 38px;
+        box-shadow: 0 10px 25px rgba(245, 102, 27, .20);
+    }
 
-            <h2>
-                Receitas prontas
-            </h2>
+    .chef-opinion-content {
+        flex: 1;
+    }
 
-            <p>
-                Prefere explorar receitas que já existem?
-                Pesquise aqui sem gastar sua consulta de IA.
-            </p>
-
-        </div>
-
-
-        <div class="catalog-search">
-
-            <input
-                id="ingredienteBusca"
-                type="text"
-                placeholder="@Model.Settings.SearchPlaceholder" />
-
-            <button
-                id="btnBuscar"
-                type="button">
-
-                🔎 Buscar
-
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div id="resultadoBusca"></div>
-
-
-    <div
-        id="secaoResultados"
-        style="display:none;">
-
-        <div
-            class="recipes-grid"
-            id="receitasEncontradas">
-        </div>
-
-    </div>
-
-</section>
-
-
-
-<!-- =========================================================
-     RECEITAS POPULARES
-========================================================= -->
-
-<section class="section popular-section">
-
-    <div class="section-heading">
-
-        <div>
-
-            <span class="section-kicker">
-                🔥 INSPIRAÇÃO
-            </span>
-
-            <h2>
-                Receitas em destaque
-            </h2>
-
-            <p>
-                Algumas ideias para você descobrir novos sabores.
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="recipes-grid">
-
-        @foreach (var receita in Model.Receitas)
-        {
-            <article class="recipe-card">
-
-                <div class="recipe-image">
-
-                    <img
-                        src="@receita.ImagemUrl"
-                        alt="@receita.Nome" />
-
-                    <span class="recipe-country">
-
-                        @receita.Bandeira
-                        @receita.Pais
-
-                    </span>
-
-                </div>
-
-
-                <div class="recipe-info">
-
-                    <h3>
-                        @receita.Nome
-                    </h3>
-
-                    <p>
-                        @receita.Descricao
-                    </p>
-
-
-                    <div class="recipe-details">
-
-                        <span>
-                            ⏱️
-                            @receita.TempoPreparoMinutos min
-                        </span>
-
-                        <span>
-                            👨‍🍳
-                            @receita.Dificuldade
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </article>
+        .chef-opinion-content h2 {
+            margin: 8px 0 10px;
+            color: #2b170d;
+            font-size: 28px;
         }
 
-    </div>
+        .chef-opinion-content > p {
+            margin: 0;
+            color: #65564c;
+            font-size: 16px;
+            line-height: 1.7;
+        }
 
-</section>
+    #blocoSugestoesIA {
+        margin-top: 24px;
+        padding: 20px;
+        background: white;
+        border: 1px solid #eee3d9;
+        border-radius: 16px;
+    }
 
+        #blocoSugestoesIA h3 {
+            margin: 0 0 13px;
+            color: #2b170d;
+            font-size: 16px;
+        }
 
+    #sugestoesIA {
+        margin: 0;
+        padding-left: 22px;
+        color: #65564c;
+    }
 
-<!-- =========================================================
-     CTA PREMIUM
-========================================================= -->
+        #sugestoesIA li {
+            margin: 8px 0;
+            line-height: 1.5;
+        }
 
-<section class="final-cta">
+    .chef-opinion-tip {
+        margin-top: 20px;
+        padding: 13px 16px;
+        background: #f3eee8;
+        border-radius: 12px;
+        color: #65564c;
+        font-size: 13px;
+    }
 
-    <div>
+        .chef-opinion-tip strong {
+            color: #2b170d;
+        }
 
-        <span>
-            👑 CHEFE IA PREMIUM
-        </span>
+    @@media(max-width: 700px) {
 
-        <h2>
-            Suas melhores receitas,
-            sempre com você.
-        </h2>
+        .chef-opinion-card {
+            flex-direction: column;
+            padding: 24px;
+        }
 
-        <p>
-            Tenha histórico, downloads, favoritos
-            e até @Model.Settings.PremiumMonthlyLimit consultas por mês.
-        </p>
+        .chef-opinion-icon {
+            width: 60px;
+            height: 60px;
+            min-width: 60px;
+            font-size: 31px;
+        }
 
-    </div>
+        .chef-opinion-content h2 {
+            font-size: 23px;
+        }
+    }
 
-
-    <a
-        asp-controller="Assinatura"
-        asp-action="Premium">
-
-        Assinar Premium →
-
-    </a>
-
-</section>
+</style>
 
 
 <script src="~/js/home.js"></script>

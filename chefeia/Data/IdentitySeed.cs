@@ -43,7 +43,7 @@ namespace chefeia.Data
             // =================================================
 
             var adminEmail =
-                "admin@chefeia.com";
+                "adm@gmail.com";
 
             var adminUser =
                 await userManager.FindByEmailAsync(

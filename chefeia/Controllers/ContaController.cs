@@ -15,7 +15,6 @@ namespace chefeia.Controllers
         private readonly SignInManager<AppUser> _signInManager;
         private readonly AppDbContext _dbContext;
 
-
         public ContaController(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
@@ -52,7 +51,6 @@ namespace chefeia.Controllers
                 );
             }
 
-
             return View(
                 new LoginViewModel
                 {
@@ -73,17 +71,14 @@ namespace chefeia.Controllers
                 return View(model);
             }
 
-
             var email =
                 model.Email
                     .Trim()
                     .ToLowerInvariant();
 
-
             var usuario =
                 await _userManager
                     .FindByEmailAsync(email);
-
 
             if (usuario == null)
             {
@@ -95,7 +90,6 @@ namespace chefeia.Controllers
                 return View(model);
             }
 
-
             if (!usuario.IsActive)
             {
                 ModelState.AddModelError(
@@ -106,7 +100,6 @@ namespace chefeia.Controllers
                 return View(model);
             }
 
-
             var resultado =
                 await _signInManager
                     .PasswordSignInAsync(
@@ -115,7 +108,6 @@ namespace chefeia.Controllers
                         model.RememberMe,
                         lockoutOnFailure: true
                     );
-
 
             if (resultado.IsLockedOut)
             {
@@ -127,7 +119,6 @@ namespace chefeia.Controllers
                 return View(model);
             }
 
-
             if (!resultado.Succeeded)
             {
                 ModelState.AddModelError(
@@ -138,14 +129,11 @@ namespace chefeia.Controllers
                 return View(model);
             }
 
-
             usuario.LastLoginAt =
                 DateTime.UtcNow;
 
-
             await _userManager
                 .UpdateAsync(usuario);
-
 
             if (
                 await _userManager
@@ -160,7 +148,6 @@ namespace chefeia.Controllers
                 );
             }
 
-
             if (
                 !string.IsNullOrWhiteSpace(
                     model.ReturnUrl
@@ -173,7 +160,6 @@ namespace chefeia.Controllers
                     model.ReturnUrl
                 );
             }
-
 
             return RedirectToAction(
                 "Index",
@@ -198,7 +184,6 @@ namespace chefeia.Controllers
                 );
             }
 
-
             return View(
                 new RegisterViewModel()
             );
@@ -216,17 +201,14 @@ namespace chefeia.Controllers
                 return View(model);
             }
 
-
             var email =
                 model.Email
                     .Trim()
                     .ToLowerInvariant();
 
-
             var existente =
                 await _userManager
                     .FindByEmailAsync(email);
-
 
             if (existente != null)
             {
@@ -238,32 +220,17 @@ namespace chefeia.Controllers
                 return View(model);
             }
 
-
             var usuario =
                 new AppUser
                 {
-                    UserName =
-                        email,
-
-                    Email =
-                        email,
-
-                    Name =
-                        model.Name.Trim(),
-
-                    PlanCode =
-                        "FREE",
-
-                    IsActive =
-                        true,
-
-                    CreatedAt =
-                        DateTime.UtcNow,
-
-                    EmailConfirmed =
-                        true
+                    UserName = email,
+                    Email = email,
+                    Name = model.Name.Trim(),
+                    PlanCode = "FREE",
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    EmailConfirmed = true
                 };
-
 
             var resultado =
                 await _userManager
@@ -271,7 +238,6 @@ namespace chefeia.Controllers
                         usuario,
                         model.Password
                     );
-
 
             if (!resultado.Succeeded)
             {
@@ -285,17 +251,14 @@ namespace chefeia.Controllers
                     );
                 }
 
-
                 return View(model);
             }
-
 
             await _signInManager
                 .SignInAsync(
                     usuario,
                     isPersistent: false
                 );
-
 
             return RedirectToAction(
                 "Index",
@@ -316,7 +279,6 @@ namespace chefeia.Controllers
                 await _userManager
                     .GetUserAsync(User);
 
-
             if (usuario == null)
             {
                 return RedirectToAction(
@@ -324,24 +286,20 @@ namespace chefeia.Controllers
                 );
             }
 
-
             if (!usuario.IsActive)
             {
                 await _signInManager
                     .SignOutAsync();
-
 
                 return RedirectToAction(
                     nameof(Login)
                 );
             }
 
-
             var plano =
                 ObterPlanoUsuario(
                     usuario
                 );
-
 
             if (plano != "PREMIUM")
             {
@@ -349,7 +307,6 @@ namespace chefeia.Controllers
                     "HistoricoPremiumNecessario"
                 );
             }
-
 
             var registros =
                 await _dbContext
@@ -365,10 +322,8 @@ namespace chefeia.Controllers
                     )
                     .ToListAsync();
 
-
             var model =
                 new List<RecipeHistoryViewModel>();
-
 
             foreach (var item in registros)
             {
@@ -377,12 +332,10 @@ namespace chefeia.Controllers
                         item.IngredientsJson
                     );
 
-
                 var passos =
                     DeserializarLista(
                         item.StepsJson
                     );
-
 
                 model.Add(
                     new RecipeHistoryViewModel
@@ -426,8 +379,81 @@ namespace chefeia.Controllers
                 );
             }
 
-
             return View(model);
+        }
+
+
+        // =====================================================
+        // EXCLUIR RECEITA DO HISTÓRICO
+        // =====================================================
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExcluirReceita(
+            int id)
+        {
+            var usuario =
+                await _userManager
+                    .GetUserAsync(User);
+
+            if (usuario == null)
+            {
+                return RedirectToAction(
+                    nameof(Login)
+                );
+            }
+
+            if (!usuario.IsActive)
+            {
+                await _signInManager
+                    .SignOutAsync();
+
+                return RedirectToAction(
+                    nameof(Login)
+                );
+            }
+
+            var plano =
+                ObterPlanoUsuario(
+                    usuario
+                );
+
+            if (plano != "PREMIUM")
+            {
+                return View(
+                    "HistoricoPremiumNecessario"
+                );
+            }
+
+            var receita =
+                await _dbContext
+                    .RecipeHistories
+                    .FirstOrDefaultAsync(
+                        x =>
+                            x.Id == id &&
+                            x.UserId ==
+                            usuario.Id
+                    );
+
+            if (receita == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext
+                .RecipeHistories
+                .Remove(receita);
+
+            await _dbContext
+                .SaveChangesAsync();
+
+            TempData["Sucesso"] =
+                "Receita excluída com sucesso.";
+
+            return RedirectToAction(
+                nameof(Historico)
+            );
         }
 
 
@@ -440,14 +466,9 @@ namespace chefeia.Controllers
         public async Task<IActionResult> DownloadReceita(
             int id)
         {
-            // =================================================
-            // USUÁRIO LOGADO
-            // =================================================
-
             var usuario =
                 await _userManager
                     .GetUserAsync(User);
-
 
             if (usuario == null)
             {
@@ -456,32 +477,20 @@ namespace chefeia.Controllers
                 );
             }
 
-
-            // =================================================
-            // CONTA ATIVA
-            // =================================================
-
             if (!usuario.IsActive)
             {
                 await _signInManager
                     .SignOutAsync();
-
 
                 return RedirectToAction(
                     nameof(Login)
                 );
             }
 
-
-            // =================================================
-            // PLANO PREMIUM
-            // =================================================
-
             var plano =
                 ObterPlanoUsuario(
                     usuario
                 );
-
 
             if (plano != "PREMIUM")
             {
@@ -489,17 +498,6 @@ namespace chefeia.Controllers
                     "HistoricoPremiumNecessario"
                 );
             }
-
-
-            // =================================================
-            // BUSCAR RECEITA
-            //
-            // IMPORTANTE:
-            // além do ID, verificamos o UserId.
-            //
-            // Assim um usuário não consegue baixar a receita
-            // de outro usuário alterando o ID na URL.
-            // =================================================
 
             var receita =
                 await _dbContext
@@ -512,36 +510,23 @@ namespace chefeia.Controllers
                             usuario.Id
                     );
 
-
             if (receita == null)
             {
                 return NotFound();
             }
-
-
-            // =================================================
-            // CONVERTER INGREDIENTES E PASSOS
-            // =================================================
 
             var ingredientes =
                 DeserializarLista(
                     receita.IngredientsJson
                 );
 
-
             var passos =
                 DeserializarLista(
                     receita.StepsJson
                 );
 
-
-            // =================================================
-            // MONTAR ARQUIVO
-            // =================================================
-
             var texto =
                 new StringBuilder();
-
 
             texto.AppendLine(
                 "========================================"
@@ -557,14 +542,11 @@ namespace chefeia.Controllers
 
             texto.AppendLine();
 
-
             texto.AppendLine(
                 receita.Name
             );
 
-
             texto.AppendLine();
-
 
             if (
                 !string.IsNullOrWhiteSpace(
@@ -576,7 +558,6 @@ namespace chefeia.Controllers
 
                 texto.AppendLine();
             }
-
 
             texto.AppendLine(
                 "----------------------------------------"
@@ -590,7 +571,6 @@ namespace chefeia.Controllers
                 "----------------------------------------"
             );
 
-
             if (
                 !string.IsNullOrWhiteSpace(
                     receita.Country))
@@ -599,7 +579,6 @@ namespace chefeia.Controllers
                     $"Origem: {receita.Country}"
                 );
             }
-
 
             if (
                 !string.IsNullOrWhiteSpace(
@@ -610,23 +589,15 @@ namespace chefeia.Controllers
                 );
             }
 
-
             texto.AppendLine(
                 $"Tempo de preparo: {receita.PreparationMinutes} minutos"
             );
-
 
             texto.AppendLine(
                 $"Porções: {receita.Servings}"
             );
 
-
             texto.AppendLine();
-
-
-            // =================================================
-            // INGREDIENTES
-            // =================================================
 
             texto.AppendLine(
                 "----------------------------------------"
@@ -639,7 +610,6 @@ namespace chefeia.Controllers
             texto.AppendLine(
                 "----------------------------------------"
             );
-
 
             if (ingredientes.Count == 0)
             {
@@ -659,13 +629,7 @@ namespace chefeia.Controllers
                 }
             }
 
-
             texto.AppendLine();
-
-
-            // =================================================
-            // MODO DE PREPARO
-            // =================================================
 
             texto.AppendLine(
                 "----------------------------------------"
@@ -678,7 +642,6 @@ namespace chefeia.Controllers
             texto.AppendLine(
                 "----------------------------------------"
             );
-
 
             if (passos.Count == 0)
             {
@@ -701,11 +664,6 @@ namespace chefeia.Controllers
                 }
             }
 
-
-            // =================================================
-            // CONSULTA ORIGINAL
-            // =================================================
-
             if (
                 !string.IsNullOrWhiteSpace(
                     receita.RequestedIngredients))
@@ -722,7 +680,6 @@ namespace chefeia.Controllers
                     "----------------------------------------"
                 );
 
-
                 texto.AppendLine(
                     "Ingredientes informados:"
                 );
@@ -730,7 +687,6 @@ namespace chefeia.Controllers
                 texto.AppendLine(
                     receita.RequestedIngredients
                 );
-
 
                 if (
                     !string.IsNullOrWhiteSpace(
@@ -743,14 +699,8 @@ namespace chefeia.Controllers
                     );
                 }
 
-
                 texto.AppendLine();
             }
-
-
-            // =================================================
-            // RODAPÉ
-            // =================================================
 
             texto.AppendLine(
                 "========================================"
@@ -768,20 +718,11 @@ namespace chefeia.Controllers
                 "========================================"
             );
 
-
-            // =================================================
-            // UTF-8 COM BOM
-            //
-            // Isso ajuda o Windows/Bloco de Notas a exibir
-            // corretamente acentos, ç e emojis.
-            // =================================================
-
             var utf8 =
                 new UTF8Encoding(
                     encoderShouldEmitUTF8Identifier:
                         true
                 );
-
 
             var conteudo =
                 utf8.GetPreamble()
@@ -792,16 +733,10 @@ namespace chefeia.Controllers
                     )
                     .ToArray();
 
-
-            // =================================================
-            // NOME SEGURO DO ARQUIVO
-            // =================================================
-
             var nomeArquivo =
                 CriarNomeArquivoSeguro(
                     receita.Name
                 );
-
 
             return File(
                 conteudo,
@@ -822,7 +757,6 @@ namespace chefeia.Controllers
         {
             await _signInManager
                 .SignOutAsync();
-
 
             return RedirectToAction(
                 "Index",
@@ -857,12 +791,10 @@ namespace chefeia.Controllers
                 return "FREE";
             }
 
-
             var plano =
                 usuario.PlanCode
                     .Trim()
                     .ToUpperInvariant();
-
 
             if (
                 plano != "FREE" &&
@@ -870,7 +802,6 @@ namespace chefeia.Controllers
             {
                 return "FREE";
             }
-
 
             return plano;
         }
@@ -889,7 +820,6 @@ namespace chefeia.Controllers
             {
                 return new List<string>();
             }
-
 
             try
             {
@@ -918,7 +848,6 @@ namespace chefeia.Controllers
                     ? "receita-chefe-ia"
                     : nome.Trim();
 
-
             foreach (
                 var caractere
                 in Path.GetInvalidFileNameChars())
@@ -930,13 +859,11 @@ namespace chefeia.Controllers
                     );
             }
 
-
             nomeArquivo =
                 nomeArquivo.Replace(
                     " ",
                     "-"
                 );
-
 
             while (
                 nomeArquivo.Contains(
@@ -950,14 +877,12 @@ namespace chefeia.Controllers
                     );
             }
 
-
             nomeArquivo =
                 nomeArquivo.Trim(
                     '-',
                     '.',
                     ' '
                 );
-
 
             if (
                 string.IsNullOrWhiteSpace(
@@ -966,7 +891,6 @@ namespace chefeia.Controllers
                 nomeArquivo =
                     "receita-chefe-ia";
             }
-
 
             if (
                 nomeArquivo.Length > 80)
@@ -977,7 +901,6 @@ namespace chefeia.Controllers
                         80
                     );
             }
-
 
             return nomeArquivo;
         }

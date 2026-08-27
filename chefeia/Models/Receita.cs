@@ -4,20 +4,49 @@
     {
         public int Id { get; set; }
 
-        public string Nome { get; set; } = string.Empty;
+        public string Nome { get; set; } =
+            string.Empty;
 
-        public string Descricao { get; set; } = string.Empty;
+        public string Descricao { get; set; } =
+            string.Empty;
 
-        public string Pais { get; set; } = string.Empty;
+        public string Pais { get; set; } =
+            string.Empty;
 
-        public string Bandeira { get; set; } = string.Empty;
+        public string Bandeira { get; set; } =
+            string.Empty;
 
-        public string Categoria { get; set; } = string.Empty;
+        public string Categoria { get; set; } =
+            string.Empty;
 
-        public string ImagemUrl { get; set; } = string.Empty;
+        public string ImagemUrl { get; set; } =
+            string.Empty;
 
         public int TempoPreparoMinutos { get; set; }
 
-        public string Dificuldade { get; set; } = string.Empty;
+        public string Dificuldade { get; set; } =
+            string.Empty;
+
+
+        // =====================================================
+        // DETALHES DA RECEITA
+        // =====================================================
+
+        public int Porcoes { get; set; }
+
+
+        public List<string> Ingredientes { get; set; } =
+            new();
+
+
+        public List<string> Passos { get; set; } =
+            new();
+
+
+        // =====================================================
+        // CONTROLE
+        // =====================================================
+
+        public bool CriadaPorIa { get; set; }
     }
 }

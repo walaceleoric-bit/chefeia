@@ -1,255 +1,49 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
 
-    // =====================================================
-    // BUSCA DE RECEITAS PRONTAS
-    // =====================================================
-
-    const input =
-        document.getElementById("ingredienteBusca");
-
-    const botao =
-        document.getElementById("btnBuscar");
-
-    const resultadoBusca =
-        document.getElementById("resultadoBusca");
-
-    const secaoResultados =
-        document.getElementById("secaoResultados");
-
-    const receitasEncontradas =
-        document.getElementById("receitasEncontradas");
-
-
-    if (botao && input) {
-
-        botao.addEventListener(
-            "click",
-            buscarReceitas
-        );
-
-
-        input.addEventListener(
-            "keydown",
-            event => {
-
-                if (event.key === "Enter") {
-
-                    event.preventDefault();
-
-                    buscarReceitas();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    async function buscarReceitas() {
-
-        const termo =
-            input.value.trim();
-
-
-        if (!termo) {
-
-            resultadoBusca.innerHTML =
-                "<p>Digite algo para pesquisar.</p>";
-
-            return;
-
-        }
-
-
-        resultadoBusca.innerHTML =
-            "<p>🔎 Buscando receitas...</p>";
-
-
-        secaoResultados.style.display =
-            "none";
-
-
-        receitasEncontradas.innerHTML =
-            "";
-
-
-        try {
-
-            const response =
-                await fetch(
-                    `/api/receitas/buscar?termo=${encodeURIComponent(termo)}`
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Erro ao consultar receitas."
-                );
-
-            }
-
-
-            const receitas =
-                await response.json();
-
-
-            if (
-                !Array.isArray(receitas) ||
-                receitas.length === 0
-            ) {
-
-                resultadoBusca.innerHTML =
-                    `
-                    <p>
-                        Nenhuma receita encontrada para
-                        <strong>${escapeHtml(termo)}</strong>.
-                    </p>
-                    `;
-
-                return;
-
-            }
-
-
-            resultadoBusca.innerHTML =
-                `
-                <p>
-                    Encontramos
-                    <strong>${receitas.length}</strong>
-                    receita(s) para
-                    <strong>${escapeHtml(termo)}</strong>.
-                </p>
-                `;
-
-
-            receitasEncontradas.innerHTML =
-                receitas
-                    .map(criarCardReceita)
-                    .join("");
-
-
-            secaoResultados.style.display =
-                "block";
-
-
-            secaoResultados.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-
-        }
-        catch (erro) {
-
-            console.error(
-                "Erro ao buscar receitas:",
-                erro
-            );
-
-
-            resultadoBusca.innerHTML =
-                `
-                <p>
-                    Não foi possível realizar a busca.
-                </p>
-                `;
-
-        }
-
-    }
-
-
-    function criarCardReceita(receita) {
-
-        return `
-            <article class="recipe-card">
-
-                <img
-                    src="${escapeHtml(receita.imagemUrl)}"
-                    alt="${escapeHtml(receita.nome)}"
-                />
-
-                <div class="recipe-info">
-
-                    <span class="country">
-                        ${escapeHtml(receita.bandeira)}
-                        ${escapeHtml(receita.pais)}
-                    </span>
-
-                    <h3>
-                        ${escapeHtml(receita.nome)}
-                    </h3>
-
-                    <p>
-                        ${escapeHtml(receita.descricao)}
-                    </p>
-
-                    <div class="recipe-details">
-
-                        <span>
-                            ⏱ ${receita.tempoPreparoMinutos} min
-                        </span>
-
-                        <span>
-                            👨‍🍳 ${escapeHtml(receita.dificuldade)}
-                        </span>
-
-                    </div>
-
-                </div>
-
-            </article>
-        `;
-
-    }
-
-
-    // =====================================================
-    // CHEFE IA - ELEMENTOS
-    // =====================================================
-
     const ingredienteIA =
         document.getElementById("ingredienteIA");
 
     const btnAdicionarIngrediente =
-        document.getElementById(
-            "btnAdicionarIngrediente"
-        );
+        document.getElementById("btnAdicionarIngrediente");
 
     const listaIngredientes =
-        document.getElementById(
-            "listaIngredientes"
-        );
+        document.getElementById("listaIngredientes");
 
     const btnDescobrirIA =
-        document.getElementById(
-            "btnDescobrirIA"
-        );
+        document.getElementById("btnDescobrirIA");
 
     const preferenciaIA =
-        document.getElementById(
-            "preferenciaIA"
-        );
+        document.getElementById("preferenciaIA");
 
     const porcoesIA =
-        document.getElementById(
-            "porcoesIA"
-        );
+        document.getElementById("porcoesIA");
 
     const statusIA =
-        document.getElementById(
-            "statusIA"
-        );
+        document.getElementById("statusIA");
 
     const resultadoIA =
-        document.getElementById(
-            "resultadoIA"
-        );
+        document.getElementById("resultadoIA");
+
+    const orientacaoIA =
+        document.getElementById("orientacaoIA");
+
+    const tituloOrientacaoIA =
+        document.getElementById("tituloOrientacaoIA");
+
+    const subtituloOrientacaoIA =
+        document.getElementById("subtituloOrientacaoIA");
+
+    const mensagemOrientacaoIA =
+        document.getElementById("mensagemOrientacaoIA");
+
+    const blocoSugestoesIA =
+        document.getElementById("blocoSugestoesIA");
+
+    const sugestoesIA =
+        document.getElementById("sugestoesIA");
 
 
-    const ingredientesSelecionados =
-        [];
+    const ingredientesSelecionados = [];
 
 
     // =====================================================
@@ -260,49 +54,43 @@
         btnAdicionarIngrediente &&
         ingredienteIA
     ) {
-
-        btnAdicionarIngrediente
-            .addEventListener(
-                "click",
-                adicionarIngrediente
-            );
-
+        btnAdicionarIngrediente.addEventListener(
+            "click",
+            adicionarIngrediente
+        );
 
         ingredienteIA.addEventListener(
             "keydown",
             event => {
-
                 if (event.key === "Enter") {
-
                     event.preventDefault();
-
                     adicionarIngrediente();
-
                 }
-
             }
         );
-
     }
 
 
     function adicionarIngrediente() {
 
+        if (!ingredienteIA) {
+            return;
+        }
+
         const ingrediente =
             ingredienteIA.value.trim();
 
-
         if (!ingrediente) {
 
-            statusIA.innerHTML =
-                mensagemAviso(
-                    "Digite um ingrediente."
-                );
+            if (statusIA) {
+                statusIA.innerHTML =
+                    mensagemAviso(
+                        "Digite um ingrediente."
+                    );
+            }
 
             return;
-
         }
-
 
         const jaExiste =
             ingredientesSelecionados.some(
@@ -311,37 +99,31 @@
                     ingrediente.toLowerCase()
             );
 
-
         if (jaExiste) {
 
-            statusIA.innerHTML =
-                mensagemAviso(
-                    "Esse ingrediente já foi adicionado."
-                );
+            if (statusIA) {
+                statusIA.innerHTML =
+                    mensagemAviso(
+                        "Esse ingrediente já foi adicionado."
+                    );
+            }
 
             return;
-
         }
-
 
         ingredientesSelecionados.push(
             ingrediente
         );
 
-
-        ingredienteIA.value =
-            "";
-
+        ingredienteIA.value = "";
 
         ingredienteIA.focus();
 
-
-        statusIA.innerHTML =
-            "";
-
+        if (statusIA) {
+            statusIA.innerHTML = "";
+        }
 
         atualizarListaIngredientes();
-
     }
 
 
@@ -351,11 +133,14 @@
 
     function atualizarListaIngredientes() {
 
+        if (!listaIngredientes) {
+            return;
+        }
+
         listaIngredientes.innerHTML =
             ingredientesSelecionados
                 .map(
                     (ingrediente, indice) => {
-
                         return `
                             <span class="ingrediente-tag">
 
@@ -366,22 +151,21 @@
                                     class="remover-ingrediente"
                                     data-indice="${indice}"
                                     title="Remover ingrediente">
+
                                     ×
+
                                 </button>
 
                             </span>
                         `;
-
                     }
                 )
                 .join("");
-
 
         const botoesRemover =
             document.querySelectorAll(
                 ".remover-ingrediente"
             );
-
 
         botoesRemover.forEach(
             botaoRemover => {
@@ -397,27 +181,21 @@
                                     .indice
                             );
 
-
-                        ingredientesSelecionados
-                            .splice(
-                                indice,
-                                1
-                            );
-
+                        ingredientesSelecionados.splice(
+                            indice,
+                            1
+                        );
 
                         atualizarListaIngredientes();
-
                     }
                 );
-
             }
         );
-
     }
 
 
     // =====================================================
-    // BOTÃO CHEFE IA
+    // BOTÃO IA
     // =====================================================
 
     if (btnDescobrirIA) {
@@ -426,7 +204,6 @@
             "click",
             consultarChefeIA
         );
-
     }
 
 
@@ -440,60 +217,63 @@
             ingredientesSelecionados.length === 0
         ) {
 
-            statusIA.innerHTML =
-                mensagemAviso(
-                    "Adicione pelo menos um ingrediente."
-                );
+            if (statusIA) {
+                statusIA.innerHTML =
+                    mensagemAviso(
+                        "Adicione pelo menos um ingrediente."
+                    );
+            }
 
             return;
-
         }
-
 
         const porcoes =
             Number(
                 porcoesIA?.value
             );
 
-
         const consulta =
-            {
-                ingredientes:
-                    ingredientesSelecionados,
+        {
+            ingredientes:
+                ingredientesSelecionados,
 
-                preferencia:
-                    preferenciaIA?.value || "",
+            preferencia:
+                preferenciaIA?.value || "",
 
-                porcoes:
-                    porcoes > 0
-                        ? porcoes
-                        : 1
-            };
+            porcoes:
+                porcoes > 0
+                    ? porcoes
+                    : 1
+        };
 
+        esconderResultados();
 
-        statusIA.innerHTML =
-            `
-            <div style="
-                padding:12px;
-                color:#76573d;
-                font-size:13px;
-            ">
-                ✨ O Chefe IA está preparando
-                sua receita...
-            </div>
-            `;
+        if (statusIA) {
 
+            statusIA.innerHTML =
+                `
+                <div style="
+                    padding:12px;
+                    color:#76573d;
+                    font-size:13px;
+                ">
+                    👨‍🍳 O Chefe IA está analisando
+                    seus ingredientes...
+                </div>
+                `;
+        }
 
-        btnDescobrirIA.disabled =
-            true;
+        if (!btnDescobrirIA) {
+            return;
+        }
 
+        btnDescobrirIA.disabled = true;
 
         const textoOriginalBotao =
             btnDescobrirIA.innerHTML;
 
-
         btnDescobrirIA.innerHTML =
-            "👨‍🍳 Preparando...";
+            "👨‍🍳 Analisando...";
 
 
         try {
@@ -525,37 +305,32 @@
                 response.status === 401
             ) {
 
-                statusIA.innerHTML =
-                    mensagemLogin();
-
+                if (statusIA) {
+                    statusIA.innerHTML =
+                        mensagemLogin();
+                }
 
                 setTimeout(
                     () => {
 
                         const returnUrl =
                             encodeURIComponent(
-                                window.location
-                                    .pathname +
-                                window.location
-                                    .search
+                                window.location.pathname +
+                                window.location.search
                             );
-
 
                         window.location.href =
                             `/Conta/Login?returnUrl=${returnUrl}`;
-
                     },
                     900
                 );
 
-
                 return;
-
             }
 
 
             // =================================================
-            // ACESSO NEGADO
+            // CONTA DESATIVADA
             // =================================================
 
             if (
@@ -567,21 +342,20 @@
                         response
                     );
 
-
-                statusIA.innerHTML =
-                    mensagemErro(
-                        dados?.message ||
-                        "Sua conta não possui permissão para utilizar a IA."
-                    );
-
+                if (statusIA) {
+                    statusIA.innerHTML =
+                        mensagemErro(
+                            dados?.message ||
+                            "Sua conta não possui permissão para utilizar a IA."
+                        );
+                }
 
                 return;
-
             }
 
 
             // =================================================
-            // LIMITE MENSAL
+            // LIMITE DO PLANO DO USUÁRIO
             // =================================================
 
             if (
@@ -593,14 +367,54 @@
                         response
                     );
 
+                if (
+                    dados?.limitReached === true &&
+                    dados?.externalLimit !== true
+                ) {
+                    mostrarLimiteAtingido(
+                        dados
+                    );
 
-                mostrarLimiteAtingido(
-                    dados
-                );
+                    return;
+                }
 
+                if (statusIA) {
+                    statusIA.innerHTML =
+                        mensagemErro(
+                            dados?.message ||
+                            "Não foi possível continuar a consulta."
+                        );
+                }
 
                 return;
+            }
 
+
+            // =================================================
+            // RAPIDAPI / SERVIÇO EXTERNO INDISPONÍVEL
+            // =================================================
+
+            if (
+                response.status === 503
+            ) {
+
+                const dados =
+                    await tentarLerJson(
+                        response
+                    );
+
+                esconderResultados();
+
+                if (statusIA) {
+
+                    statusIA.innerHTML =
+                        mensagemServicoIndisponivel(
+                            dados?.message ||
+                            "O serviço de inteligência artificial está temporariamente indisponível."
+                        );
+                }
+
+                return;
             }
 
 
@@ -615,45 +429,77 @@
                         response
                     );
 
-
                 throw new Error(
                     dados?.message ||
                     `Erro HTTP: ${response.status}`
                 );
-
             }
 
 
             // =================================================
-            // SUCESSO
+            // RESPOSTA VÁLIDA
             // =================================================
 
             const dados =
                 await response.json();
 
-
             if (
                 !dados ||
-                dados.success !== true ||
-                !dados.recipe
+                dados.success !== true
             ) {
 
                 throw new Error(
-                    "A resposta do servidor não contém uma receita válida."
+                    "A resposta do servidor não é válida."
                 );
-
             }
 
 
-            mostrarReceitaIA(
+            // =================================================
+            // RECEITA GERADA
+            // =================================================
+
+            if (
+                dados.hasRecipe === true &&
                 dados.recipe
+            ) {
+
+                mostrarReceitaIA(
+                    dados.recipe
+                );
+
+                mostrarUsoPlano(
+                    dados.usage
+                );
+
+                return;
+            }
+
+
+            // =================================================
+            // OPINIÃO / SUGESTÃO
+            // =================================================
+
+            if (
+                dados.hasRecipe === false
+            ) {
+
+                mostrarOrientacaoIA(
+                    dados.responseType,
+                    dados.message,
+                    dados.suggestions
+                );
+
+                mostrarUsoPlano(
+                    dados.usage
+                );
+
+                return;
+            }
+
+
+            throw new Error(
+                "O servidor não informou um resultado válido."
             );
-
-
-            mostrarUsoPlano(
-                dados.usage
-            );
-
         }
         catch (erro) {
 
@@ -662,52 +508,169 @@
                 erro
             );
 
+            esconderResultados();
 
-            statusIA.innerHTML =
-                mensagemErro(
-                    "Não foi possível obter uma sugestão agora."
-                );
+            if (statusIA) {
 
+                statusIA.innerHTML =
+                    mensagemErro(
+                        erro?.message ||
+                        "Não foi possível obter uma sugestão agora."
+                    );
+            }
         }
         finally {
 
             btnDescobrirIA.disabled =
                 false;
 
-
             btnDescobrirIA.innerHTML =
                 textoOriginalBotao;
-
         }
-
     }
 
 
     // =====================================================
-    // MOSTRAR USO DO PLANO
+    // ESCONDER RESULTADOS
+    // =====================================================
+
+    function esconderResultados() {
+
+        if (resultadoIA) {
+            resultadoIA.style.display =
+                "none";
+        }
+
+        if (orientacaoIA) {
+            orientacaoIA.style.display =
+                "none";
+        }
+    }
+
+
+    // =====================================================
+    // ORIENTAÇÃO DA IA
+    // =====================================================
+
+    function mostrarOrientacaoIA(
+        tipoResposta,
+        mensagem,
+        sugestoes
+    ) {
+
+        if (resultadoIA) {
+            resultadoIA.style.display =
+                "none";
+        }
+
+        const tipo =
+            String(
+                tipoResposta ||
+                "INSUFICIENTE"
+            )
+                .trim()
+                .toUpperCase();
+
+        if (tituloOrientacaoIA) {
+            tituloOrientacaoIA.textContent =
+                "👨‍🍳 OPINIÃO DO CHEFE IA";
+        }
+
+        if (subtituloOrientacaoIA) {
+
+            if (
+                tipo === "SUGESTAO"
+            ) {
+                subtituloOrientacaoIA.textContent =
+                    "Dá para melhorar essa ideia";
+            }
+            else {
+                subtituloOrientacaoIA.textContent =
+                    "Eu não faria uma receita assim";
+            }
+        }
+
+        if (mensagemOrientacaoIA) {
+
+            mensagemOrientacaoIA.textContent =
+                mensagem ||
+                "Com os ingredientes informados, ainda não encontrei uma combinação que eu recomende.";
+        }
+
+        const listaSugestoes =
+            Array.isArray(sugestoes)
+                ? sugestoes.filter(
+                    item =>
+                        item &&
+                        String(item).trim()
+                )
+                : [];
+
+        if (
+            blocoSugestoesIA &&
+            sugestoesIA
+        ) {
+
+            if (
+                listaSugestoes.length > 0
+            ) {
+
+                sugestoesIA.innerHTML =
+                    listaSugestoes
+                        .map(
+                            sugestao =>
+                                `<li>${escapeHtml(sugestao)}</li>`
+                        )
+                        .join("");
+
+                blocoSugestoesIA.style.display =
+                    "block";
+            }
+            else {
+
+                sugestoesIA.innerHTML =
+                    "";
+
+                blocoSugestoesIA.style.display =
+                    "none";
+            }
+        }
+
+        if (orientacaoIA) {
+
+            orientacaoIA.style.display =
+                "block";
+
+            orientacaoIA.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }
+
+
+    // =====================================================
+    // USO DO PLANO
     // =====================================================
 
     function mostrarUsoPlano(usage) {
 
-        if (!usage) {
-
-            statusIA.innerHTML =
-                "";
-
+        if (!statusIA) {
             return;
-
         }
 
+        if (!usage) {
+            statusIA.innerHTML = "";
+            return;
+        }
 
         const premium =
             usage.plan === "PREMIUM";
-
 
         const icone =
             premium
                 ? "👑"
                 : "🌿";
-
 
         const nomePlano =
             usage.planName ||
@@ -716,7 +679,6 @@
                     ? "Premium"
                     : "Gratuito"
             );
-
 
         statusIA.innerHTML =
             `
@@ -732,7 +694,9 @@
 
                 ${icone}
                 Plano
-                <strong>${escapeHtml(nomePlano)}</strong>
+                <strong>
+                    ${escapeHtml(nomePlano)}
+                </strong>
 
                 ·
 
@@ -754,45 +718,52 @@
 
             </div>
             `;
-
     }
 
 
     // =====================================================
-    // LIMITE ATINGIDO
+    // LIMITE INTERNO DO USUÁRIO
     // =====================================================
 
-    function mostrarLimiteAtingido(dados) {
+    function mostrarLimiteAtingido(
+        dados
+    ) {
+
+        if (!statusIA) {
+            return;
+        }
+
+        esconderResultados();
 
         const premium =
             dados?.plan === "PREMIUM";
-
 
         const limite =
             Number(
                 dados?.limit || 0
             );
 
-
         const usadas =
             Number(
                 dados?.used || limite
             );
 
-
         const mensagem =
             premium
                 ? `
                     Você utilizou
-                    <strong>${usadas}/${limite}</strong>
+                    <strong>
+                        ${usadas}/${limite}
+                    </strong>
                     consultas do seu plano Premium neste mês.
                   `
                 : `
                     Você utilizou
-                    <strong>${usadas}/${limite}</strong>
+                    <strong>
+                        ${usadas}/${limite}
+                    </strong>
                     consultas gratuitas deste mês.
                   `;
-
 
         const upgrade =
             premium
@@ -803,7 +774,7 @@
                     ">
 
                         <a
-                            href="/"
+                            href="/Assinatura/Premium"
                             style="
                                 display:inline-block;
                                 padding:10px 15px;
@@ -813,12 +784,13 @@
                                 color:white;
                                 font-weight:800;
                             ">
+
                             👑 Conhecer Premium
+
                         </a>
 
                     </div>
                   `;
-
 
         statusIA.innerHTML =
             `
@@ -863,15 +835,73 @@
 
             </div>
             `;
-
     }
 
 
     // =====================================================
-    // MOSTRAR RECEITA DA IA
+    // SERVIÇO EXTERNO INDISPONÍVEL
     // =====================================================
 
-    function mostrarReceitaIA(receita) {
+    function mensagemServicoIndisponivel(
+        texto
+    ) {
+
+        return `
+            <div style="
+                margin-top:12px;
+                padding:18px;
+                border-radius:14px;
+                background:#fff8e8;
+                border:1px solid #ead8aa;
+                color:#76573d;
+                text-align:center;
+                line-height:1.55;
+            ">
+
+                <div style="
+                    font-size:28px;
+                    margin-bottom:8px;
+                ">
+                    ⏳
+                </div>
+
+                <strong>
+                    Chefe IA temporariamente indisponível
+                </strong>
+
+                <div style="
+                    margin-top:7px;
+                    font-size:13px;
+                ">
+                    ${escapeHtml(texto)}
+                </div>
+
+                <div style="
+                    margin-top:8px;
+                    font-size:12px;
+                    opacity:.8;
+                ">
+                    Essa tentativa não foi contabilizada
+                    como consulta utilizada.
+                </div>
+
+            </div>
+        `;
+    }
+
+
+    // =====================================================
+    // MOSTRAR RECEITA
+    // =====================================================
+
+    function mostrarReceitaIA(
+        receita
+    ) {
+
+        if (orientacaoIA) {
+            orientacaoIA.style.display =
+                "none";
+        }
 
         const pais =
             document.getElementById(
@@ -917,51 +947,47 @@
         if (pais) {
 
             pais.textContent =
-                `🌎 ${receita.pais || ""}`;
-
+                receita.pais
+                    ? `🌎 ${receita.pais}`
+                    : "";
         }
-
 
         if (nome) {
 
             nome.textContent =
                 receita.nome ||
                 "Receita sugerida";
-
         }
-
 
         if (descricao) {
 
             descricao.textContent =
                 receita.descricao || "";
-
         }
-
 
         if (categoria) {
 
             categoria.textContent =
-                `🍽 ${receita.categoria || ""}`;
-
+                receita.categoria
+                    ? `🍽 ${receita.categoria}`
+                    : "";
         }
-
 
         if (tempo) {
 
             tempo.textContent =
-                `⏱ ${receita.tempoMinutos || 0} min`;
-
+                receita.tempoMinutos
+                    ? `⏱ ${receita.tempoMinutos} min`
+                    : "";
         }
-
 
         if (porcoes) {
 
             porcoes.textContent =
-                `👥 ${receita.porcoes || 1} porções`;
-
+                receita.porcoes
+                    ? `👥 ${receita.porcoes} porções`
+                    : "";
         }
-
 
         if (listaIngredientesReceita) {
 
@@ -975,9 +1001,7 @@
                             `<li>${escapeHtml(ingrediente)}</li>`
                     )
                     .join("");
-
         }
-
 
         if (listaPassos) {
 
@@ -991,23 +1015,18 @@
                             `<li>${escapeHtml(passo)}</li>`
                     )
                     .join("");
-
         }
-
 
         if (resultadoIA) {
 
             resultadoIA.style.display =
                 "block";
 
-
             resultadoIA.scrollIntoView({
                 behavior: "smooth",
                 block: "start"
             });
-
         }
-
     }
 
 
@@ -1015,7 +1034,9 @@
     // MENSAGENS
     // =====================================================
 
-    function mensagemAviso(texto) {
+    function mensagemAviso(
+        texto
+    ) {
 
         return `
             <div style="
@@ -1029,11 +1050,12 @@
                 ⚠️ ${escapeHtml(texto)}
             </div>
         `;
-
     }
 
 
-    function mensagemErro(texto) {
+    function mensagemErro(
+        texto
+    ) {
 
         return `
             <div style="
@@ -1047,7 +1069,6 @@
                 ❌ ${escapeHtml(texto)}
             </div>
         `;
-
     }
 
 
@@ -1079,12 +1100,11 @@
 
             </div>
         `;
-
     }
 
 
     // =====================================================
-    // TENTAR LER JSON
+    // LER JSON
     // =====================================================
 
     async function tentarLerJson(
@@ -1092,34 +1112,28 @@
     ) {
 
         try {
-
             return await response.json();
-
         }
         catch {
-
             return null;
-
         }
-
     }
 
 
     // =====================================================
-    // SEGURANÇA DE HTML
+    // SEGURANÇA HTML
     // =====================================================
 
-    function escapeHtml(valor) {
+    function escapeHtml(
+        valor
+    ) {
 
         if (
             valor === null ||
             valor === undefined
         ) {
-
             return "";
-
         }
-
 
         return String(valor)
             .replaceAll("&", "&amp;")
@@ -1127,7 +1141,6 @@
             .replaceAll(">", "&gt;")
             .replaceAll('"', "&quot;")
             .replaceAll("'", "&#039;");
-
     }
 
 });
