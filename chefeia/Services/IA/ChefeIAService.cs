@@ -54,10 +54,6 @@ namespace chefeia.Services.AI
             var apiUrl =
                 _configuration["RapidApi:Url"];
 
-            var model =
-                _configuration["RapidApi:Model"];
-
-
             if (string.IsNullOrWhiteSpace(apiKey))
             {
                 throw new InvalidOperationException(
@@ -76,13 +72,6 @@ namespace chefeia.Services.AI
             {
                 throw new InvalidOperationException(
                     "A URL da RapidAPI não foi configurada.");
-            }
-
-
-            if (string.IsNullOrWhiteSpace(model))
-            {
-                model =
-                    "gpt-5";
             }
 
 
@@ -241,8 +230,6 @@ namespace chefeia.Services.AI
             var corpoRequisicao =
                 new
                 {
-                    model = model,
-
                     messages =
                         new[]
                         {
@@ -251,7 +238,10 @@ namespace chefeia.Services.AI
                                 role = "user",
                                 content = prompt
                             }
-                        }
+                        },
+
+                    web_access =
+                        false
                 };
 
 
@@ -425,8 +415,8 @@ namespace chefeia.Services.AI
                     null;
 
 
-                // Formato da API chatgpt-42:
-                // { "result": "...", "status": true, "server_code": 1 }
+                // Formato esperado da API:
+                // { "result": "...", "status": true }
                 if (
                     TryGetPropertyIgnoreCase(
                         raizApi,
