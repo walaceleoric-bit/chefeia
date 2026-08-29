@@ -17,8 +17,8 @@
     }
 
     /* =====================================================
-           CABEÇALHO
-        ===================================================== */
+               CABEÇALHO
+            ===================================================== */
 
     .admin-header {
         position: relative;
@@ -58,8 +58,8 @@
 
 
     /* =====================================================
-           VOLTAR
-        ===================================================== */
+               VOLTAR
+            ===================================================== */
 
     .admin-back {
         display: inline-flex;
@@ -78,8 +78,8 @@
 
 
     /* =====================================================
-           SUCESSO
-        ===================================================== */
+               SUCESSO
+            ===================================================== */
 
     .admin-success {
         display: flex;
@@ -96,8 +96,8 @@
 
 
     /* =====================================================
-           VALIDAÇÃO
-        ===================================================== */
+               VALIDAÇÃO
+            ===================================================== */
 
     .validation-summary-errors {
         padding: 15px 20px;
@@ -115,8 +115,8 @@
 
 
     /* =====================================================
-           CARDS
-        ===================================================== */
+               CARDS
+            ===================================================== */
 
     .admin-card {
         background: white;
@@ -148,8 +148,8 @@
 
 
     /* =====================================================
-           FORMULÁRIO
-        ===================================================== */
+               FORMULÁRIO
+            ===================================================== */
 
     .form-grid {
         display: grid;
@@ -206,8 +206,8 @@
 
 
     /* =====================================================
-           CARDS DE BENEFÍCIOS
-        ===================================================== */
+               CARDS DE BENEFÍCIOS
+            ===================================================== */
 
     .features-grid {
         display: grid;
@@ -250,8 +250,8 @@
 
 
     /* =====================================================
-           AVISO DOS PLANOS
-        ===================================================== */
+               AVISO DOS PLANOS
+            ===================================================== */
 
     .plans-notice {
         display: flex;
@@ -307,8 +307,8 @@
 
 
     /* =====================================================
-           BOTÃO SALVAR
-        ===================================================== */
+               BOTÃO SALVAR
+            ===================================================== */
 
     .admin-save {
         position: sticky;
@@ -349,8 +349,8 @@
 
 
     /* =====================================================
-           RESPONSIVO
-        ===================================================== */
+               RESPONSIVO
+            ===================================================== */
 
     @@media(max-width: 760px) {
 
@@ -892,6 +892,75 @@
                         </div>
 
                     </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             RAPIDAPI
+        ================================================== -->
+
+        <div class="admin-card">
+
+            <div class="admin-card-header">
+
+                <h2>
+                    ⚡ RapidAPI
+                </h2>
+
+                <p>
+                    Configure os limites mensais do plano contratado
+                    na RapidAPI para acompanhar o consumo da IA.
+                </p>
+
+            </div>
+
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label asp-for="RapidApiMonthlyRequestLimit">
+                        Limite mensal de consultas
+                    </label>
+
+                    <input asp-for="RapidApiMonthlyRequestLimit"
+                           type="number"
+                           min="0"
+                           step="1" />
+
+                    <span class="form-help">
+                        Exemplo: 100 consultas por mês.
+                    </span>
+
+                    <span asp-validation-for="RapidApiMonthlyRequestLimit">
+                    </span>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label asp-for="RapidApiMonthlyCreditLimit">
+                        Limite mensal de créditos
+                    </label>
+
+                    <input asp-for="RapidApiMonthlyCreditLimit"
+                           type="number"
+                           min="0"
+                           step="1" />
+
+                    <span class="form-help">
+                        Exemplo: 100000 créditos por mês.
+                    </span>
+
+                    <span asp-validation-for="RapidApiMonthlyCreditLimit">
+                    </span>
 
                 </div>
 

@@ -942,6 +942,23 @@ namespace chefeia.Controllers
                     DateTimeKind.Utc);
 
 
+            // =====================================================
+            // CONFIGURAÇÕES DA RAPIDAPI
+            // =====================================================
+
+            var settings =
+                await _siteSettingsService.ObterAsync();
+
+            var rapidApiMonthlyRequestLimit =
+                Math.Max(
+                    settings.RapidApiMonthlyRequestLimit,
+                    0);
+
+
+            // =====================================================
+            // CONSULTAS
+            // =====================================================
+
             var consultasHoje =
                 await _dbContext.AiUsages
                     .AsNoTracking()
@@ -986,6 +1003,40 @@ namespace chefeia.Controllers
                             !x.Success);
 
 
+            // =====================================================
+            // CONTROLE INTERNO DA RAPIDAPI
+            // =====================================================
+
+            var rapidApiRequestsUsed =
+                consultasMes;
+
+            var rapidApiRequestsRemaining =
+                Math.Max(
+                    rapidApiMonthlyRequestLimit -
+                    rapidApiRequestsUsed,
+                    0);
+
+            double rapidApiRequestsPercentUsed = 0;
+
+            if (rapidApiMonthlyRequestLimit > 0)
+            {
+                rapidApiRequestsPercentUsed =
+                    (double)rapidApiRequestsUsed /
+                    rapidApiMonthlyRequestLimit *
+                    100;
+
+                rapidApiRequestsPercentUsed =
+                    Math.Clamp(
+                        rapidApiRequestsPercentUsed,
+                        0,
+                        100);
+            }
+
+
+            // =====================================================
+            // TEMPO MÉDIO
+            // =====================================================
+
             var temposMes =
                 await _dbContext.AiUsages
                     .AsNoTracking()
@@ -1016,6 +1067,10 @@ namespace chefeia.Controllers
             }
 
 
+            // =====================================================
+            // LIMITES INFORMADOS PELA PRÓPRIA API
+            // =====================================================
+
             var ultimoComLimites =
                 await _dbContext.AiUsages
                     .AsNoTracking()
@@ -1030,6 +1085,10 @@ namespace chefeia.Controllers
                     .FirstOrDefaultAsync();
 
 
+            // =====================================================
+            // ÚLTIMAS CONSULTAS
+            // =====================================================
+
             var ultimasConsultas =
                 await _dbContext.AiUsages
                     .AsNoTracking()
@@ -1038,6 +1097,10 @@ namespace chefeia.Controllers
                     .Take(50)
                     .ToListAsync();
 
+
+            // =====================================================
+            // MODEL
+            // =====================================================
 
             var model =
                 new AdminConsumoViewModel
@@ -1059,6 +1122,18 @@ namespace chefeia.Controllers
 
                     TempoMedioMs =
                         tempoMedioMs,
+
+                    RapidApiMonthlyRequestLimit =
+                        rapidApiMonthlyRequestLimit,
+
+                    RapidApiRequestsUsed =
+                        rapidApiRequestsUsed,
+
+                    RapidApiRequestsRemaining =
+                        rapidApiRequestsRemaining,
+
+                    RapidApiRequestsPercentUsed =
+                        rapidApiRequestsPercentUsed,
 
                     RequestsLimit =
                         ultimoComLimites

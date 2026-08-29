@@ -25,30 +25,64 @@ namespace chefeia.Models
             "Ex: frango, batata, tomate...";
 
         public string Feature1Emoji { get; set; } = "🥗";
-        public string Feature1Title { get; set; } = "Receitas personalizadas";
+
+        public string Feature1Title { get; set; } =
+            "Receitas personalizadas";
+
         public string Feature1Text { get; set; } =
             "Criadas sob medida com os ingredientes que você tem.";
 
         public string Feature2Emoji { get; set; } = "⏱️";
-        public string Feature2Title { get; set; } = "Rápido e prático";
+
+        public string Feature2Title { get; set; } =
+            "Rápido e prático";
+
         public string Feature2Text { get; set; } =
             "Receitas prontas em segundos para facilitar seu dia.";
 
         public string Feature3Emoji { get; set; } = "🌎";
-        public string Feature3Title { get; set; } = "Cozinha do mundo";
+
+        public string Feature3Title { get; set; } =
+            "Cozinha do mundo";
+
         public string Feature3Text { get; set; } =
             "Explore sabores de diferentes países e culturas.";
 
         public string Feature4Emoji { get; set; } = "❤️";
-        public string Feature4Title { get; set; } = "Feito com carinho";
+
+        public string Feature4Title { get; set; } =
+            "Feito com carinho";
+
         public string Feature4Text { get; set; } =
             "Descubra novas combinações e experiências.";
+
+        // =====================================================
+        // PLANOS DOS USUÁRIOS
+        // =====================================================
 
         public int FreeMonthlyLimit { get; set; } = 3;
 
         public int PremiumMonthlyLimit { get; set; } = 50;
 
         public decimal PremiumPrice { get; set; } = 39.90m;
+
+
+        // =====================================================
+        // RAPIDAPI
+        // =====================================================
+
+        // Limite mensal de requisições do plano contratado
+        // na RapidAPI.
+        public int RapidApiMonthlyRequestLimit { get; set; } = 100;
+
+        // Limite mensal de créditos do plano contratado
+        // na RapidAPI.
+        public int RapidApiMonthlyCreditLimit { get; set; } = 100000;
+
+
+        // =====================================================
+        // RECEITA EM DESTAQUE
+        // =====================================================
 
         public string FeaturedRecipeTitle { get; set; } =
             "Frango Cremoso com Batatas";

@@ -24,16 +24,16 @@
         margin-bottom: 28px;
     }
 
-    .consumo-header h1 {
-        margin: 0;
-        color: #2b170d;
-        font-size: 34px;
-    }
+        .consumo-header h1 {
+            margin: 0;
+            color: #2b170d;
+            font-size: 34px;
+        }
 
-    .consumo-header p {
-        margin: 7px 0 0;
-        color: #786a60;
-    }
+        .consumo-header p {
+            margin: 7px 0 0;
+            color: #786a60;
+        }
 
     .voltar-admin {
         text-decoration: none;
@@ -46,8 +46,7 @@
 
     .cards-consumo {
         display: grid;
-        grid-template-columns:
-            repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 18px;
         margin-bottom: 25px;
     }
@@ -57,60 +56,54 @@
         border: 1px solid #eadfd4;
         border-radius: 19px;
         padding: 24px;
-        box-shadow:
-            0 10px 35px rgba(50,30,17,.05);
+        box-shadow: 0 10px 35px rgba(50,30,17,.05);
     }
 
-    .consumo-card .icone {
-        font-size: 29px;
-        margin-bottom: 12px;
-    }
+        .consumo-card .icone {
+            font-size: 29px;
+            margin-bottom: 12px;
+        }
 
-    .consumo-card .titulo {
-        color: #786a60;
-        font-size: 13px;
-        font-weight: 800;
-    }
+        .consumo-card .titulo {
+            color: #786a60;
+            font-size: 13px;
+            font-weight: 800;
+        }
 
-    .consumo-card .valor {
-        margin-top: 7px;
-        color: #2b170d;
-        font-size: 32px;
-        font-weight: 900;
-    }
+        .consumo-card .valor {
+            margin-top: 7px;
+            color: #2b170d;
+            font-size: 32px;
+            font-weight: 900;
+        }
 
-    .consumo-card .detalhe {
-        margin-top: 5px;
-        color: #9a8d84;
-        font-size: 12px;
-    }
+        .consumo-card .detalhe {
+            margin-top: 5px;
+            color: #9a8d84;
+            font-size: 12px;
+        }
 
 
     /* =========================================
-       RAPIDAPI
-    ========================================= */
+           RAPIDAPI
+        ========================================= */
 
     .rapid-box {
         margin-bottom: 25px;
         padding: 28px;
         border-radius: 22px;
         color: white;
-        background:
-            linear-gradient(
-                135deg,
-                #28140a,
-                #4a2918
-            );
+        background: linear-gradient( 135deg, #28140a, #4a2918 );
     }
 
-    .rapid-box h2 {
-        margin: 0 0 6px;
-    }
+        .rapid-box h2 {
+            margin: 0 0 6px;
+        }
 
-    .rapid-box > p {
-        margin: 0 0 23px;
-        color: rgba(255,255,255,.65);
-    }
+        .rapid-box > p {
+            margin: 0 0 23px;
+            color: rgba(255,255,255,.65);
+        }
 
     .rapid-grid {
         display: grid;
@@ -139,11 +132,11 @@
         font-weight: 900;
     }
 
-    .rapid-numbers small {
-        font-size: 14px;
-        font-weight: normal;
-        color: rgba(255,255,255,.55);
-    }
+        .rapid-numbers small {
+            font-size: 14px;
+            font-weight: normal;
+            color: rgba(255,255,255,.55);
+        }
 
     .progress {
         height: 8px;
@@ -160,17 +153,50 @@
     }
 
 
+    .rapid-interno {
+        grid-column: 1 / -1;
+        background: rgba(245,102,27,.14);
+        border-color: rgba(245,102,27,.35);
+    }
+
+    .rapid-resumo {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 16px;
+    }
+
+    .rapid-resumo-item {
+        padding: 12px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.07);
+    }
+
+        .rapid-resumo-item span {
+            display: block;
+            color: rgba(255,255,255,.58);
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .rapid-resumo-item strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 21px;
+        }
+
+
     /* =========================================
-       TABELA
-    ========================================= */
+           TABELA
+        ========================================= */
 
     .table-box {
         background: white;
         border: 1px solid #eadfd4;
         border-radius: 22px;
         overflow: hidden;
-        box-shadow:
-            0 10px 35px rgba(50,30,17,.05);
+        box-shadow: 0 10px 35px rgba(50,30,17,.05);
     }
 
     .table-title {
@@ -178,17 +204,17 @@
         border-bottom: 1px solid #eee5dc;
     }
 
-    .table-title h2 {
-        margin: 0;
-        color: #2b170d;
-        font-size: 21px;
-    }
+        .table-title h2 {
+            margin: 0;
+            color: #2b170d;
+            font-size: 21px;
+        }
 
-    .table-title p {
-        margin: 5px 0 0;
-        color: #786a60;
-        font-size: 13px;
-    }
+        .table-title p {
+            margin: 5px 0 0;
+            color: #786a60;
+            font-size: 13px;
+        }
 
     .table-scroll {
         overflow-x: auto;
@@ -200,22 +226,22 @@
         min-width: 850px;
     }
 
-    .usage-table th {
-        padding: 13px 17px;
-        text-align: left;
-        background: #faf7f3;
-        color: #786a60;
-        font-size: 11px;
-        text-transform: uppercase;
-        letter-spacing: .6px;
-    }
+        .usage-table th {
+            padding: 13px 17px;
+            text-align: left;
+            background: #faf7f3;
+            color: #786a60;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .6px;
+        }
 
-    .usage-table td {
-        padding: 15px 17px;
-        border-top: 1px solid #f1ebe5;
-        color: #49392f;
-        font-size: 13px;
-    }
+        .usage-table td {
+            padding: 15px 17px;
+            border-top: 1px solid #f1ebe5;
+            color: #49392f;
+            font-size: 13px;
+        }
 
     .status-ok {
         display: inline-block;
@@ -256,6 +282,11 @@
         }
 
         .rapid-grid {
+            grid-template-columns: 1fr;
+        }
+
+
+        .rapid-resumo {
             grid-template-columns: 1fr;
         }
     }
@@ -337,10 +368,9 @@
         </div>
 
 
-        <a
-            asp-controller="Admin"
-            asp-action="Index"
-            class="voltar-admin">
+        <a asp-controller="Admin"
+           asp-action="Index"
+           class="voltar-admin">
 
             ← Painel
 
@@ -499,18 +529,70 @@
         </h2>
 
         <p>
-            Últimos limites informados pela API.
+            Controle mensal da franquia usada pelo Chefe IA.
         </p>
 
 
         <div class="rapid-grid">
 
-            <!-- REQUESTS -->
+            <!-- CONTROLE INTERNO -->
+
+            <div class="rapid-card rapid-interno">
+
+                <div class="rapid-card-title">
+                    Controle mensal de requests
+                </div>
+
+                <div class="rapid-numbers">
+                    @Model.RapidApiRequestsRemaining
+
+                    <small>
+                        restantes de @Model.RapidApiMonthlyRequestLimit
+                    </small>
+                </div>
+
+                <div class="progress">
+
+                    <div class="progress-bar"
+                         style="width:@Model.RapidApiRequestsPercentUsed.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
+                    </div>
+
+                </div>
+
+                <div class="rapid-resumo">
+
+                    <div class="rapid-resumo-item">
+                        <span>Limite</span>
+                        <strong>
+                            @Model.RapidApiMonthlyRequestLimit
+                        </strong>
+                    </div>
+
+                    <div class="rapid-resumo-item">
+                        <span>Usadas</span>
+                        <strong>
+                            @Model.RapidApiRequestsUsed
+                        </strong>
+                    </div>
+
+                    <div class="rapid-resumo-item">
+                        <span>Consumido</span>
+                        <strong>
+                            @Model.RapidApiRequestsPercentUsed.ToString("N1")%
+                        </strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- LIMITES INFORMADOS PELA API -->
 
             <div class="rapid-card">
 
                 <div class="rapid-card-title">
-                    Requests restantes
+                    Requests informados pela API
                 </div>
 
                 @if (
@@ -522,7 +604,7 @@
                         @Model.RequestsRemaining
 
                         <small>
-                            / @Model.RequestsLimit
+                            / @Model.RequestsLimit restantes
                         </small>
 
                     </div>
@@ -530,9 +612,8 @@
 
                     <div class="progress">
 
-                        <div
-                            class="progress-bar"
-                            style="width:@requestsPercentual.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
+                        <div class="progress-bar"
+                             style="width:@requestsPercentual.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
                         </div>
 
                     </div>
@@ -543,7 +624,7 @@
                         —
 
                         <small>
-                            aguardando consulta
+                            não informado pelo provedor
                         </small>
                     </div>
                 }
@@ -551,12 +632,12 @@
             </div>
 
 
-            <!-- CRÉDITOS -->
+            <!-- CRÉDITOS INFORMADOS PELA API -->
 
             <div class="rapid-card">
 
                 <div class="rapid-card-title">
-                    Créditos restantes
+                    Créditos informados pela API
                 </div>
 
                 @if (
@@ -568,7 +649,7 @@
                         @Model.CreditRemaining
 
                         <small>
-                            / @Model.CreditLimit
+                            / @Model.CreditLimit restantes
                         </small>
 
                     </div>
@@ -576,9 +657,8 @@
 
                     <div class="progress">
 
-                        <div
-                            class="progress-bar"
-                            style="width:@creditPercentual.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
+                        <div class="progress-bar"
+                             style="width:@creditPercentual.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
                         </div>
 
                     </div>
@@ -589,7 +669,7 @@
                         —
 
                         <small>
-                            aguardando consulta
+                            não informado pelo provedor
                         </small>
                     </div>
                 }
@@ -693,10 +773,10 @@
                                 <td>
 
                                     @item.CreatedAt
-                                        .ToLocalTime()
-                                        .ToString(
-                                            "dd/MM/yyyy HH:mm"
-                                        )
+                                    .ToLocalTime()
+                                    .ToString(
+                                    "dd/MM/yyyy HH:mm"
+                                    )
 
                                 </td>
 

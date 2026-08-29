@@ -20,7 +20,20 @@
 
 
         // =====================================================
-        // RAPIDAPI
+        // RAPIDAPI - CONTROLE INTERNO
+        // =====================================================
+
+        public int RapidApiMonthlyRequestLimit { get; set; }
+
+        public int RapidApiRequestsUsed { get; set; }
+
+        public int RapidApiRequestsRemaining { get; set; }
+
+        public double RapidApiRequestsPercentUsed { get; set; }
+
+
+        // =====================================================
+        // RAPIDAPI - LIMITES INFORMADOS PELA API
         // =====================================================
 
         public int? RequestsLimit { get; set; }

@@ -123,6 +123,22 @@ namespace chefeia.Services
                 atual.PremiumPrice =
                     settings.PremiumPrice;
 
+
+                // =============================================
+                // RAPIDAPI
+                // =============================================
+
+                atual.RapidApiMonthlyRequestLimit =
+                    settings.RapidApiMonthlyRequestLimit;
+
+                atual.RapidApiMonthlyCreditLimit =
+                    settings.RapidApiMonthlyCreditLimit;
+
+
+                // =============================================
+                // RECEITA EM DESTAQUE
+                // =============================================
+
                 atual.FeaturedRecipeTitle =
                     settings.FeaturedRecipeTitle;
 

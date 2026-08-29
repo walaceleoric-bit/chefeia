@@ -82,7 +82,7 @@ namespace chefeia.Services.AI
             if (string.IsNullOrWhiteSpace(model))
             {
                 model =
-                    "gpt-5.6-terra";
+                    "gpt-5";
             }
 
 
