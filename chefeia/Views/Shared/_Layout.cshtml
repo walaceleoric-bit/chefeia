@@ -57,8 +57,8 @@
     <style>
 
             /* =====================================================
-                                   CABEÇALHO
-                                ====================================================== */
+                       CABEÇALHO
+                    ====================================================== */
 
             .chefe-header {
                 position: sticky;
@@ -84,8 +84,8 @@
 
 
             /* =====================================================
-                                   MARCA
-                                ====================================================== */
+                       MARCA
+                    ====================================================== */
 
             .chefe-logo {
                 display: inline-flex;
@@ -164,8 +164,8 @@
 
 
             /* =====================================================
-                                   MENU CENTRAL
-                                ====================================================== */
+                       MENU CENTRAL
+                    ====================================================== */
 
             .chefe-menu {
                 display: flex;
@@ -194,8 +194,32 @@
 
 
             /* =====================================================
-                                   CONTA
-                                ====================================================== */
+                       MENU MOBILE
+                    ====================================================== */
+
+            .mobile-menu-button {
+                display: none;
+                width: 42px;
+                height: 42px;
+                border: 1px solid #ded0c5;
+                border-radius: 11px;
+                background: #fff;
+                color: #2b170d;
+                cursor: pointer;
+                font-size: 22px;
+                line-height: 1;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-menu-button:hover {
+                background: #faf4ee;
+            }
+
+
+            /* =====================================================
+                       CONTA
+                    ====================================================== */
 
             .chefe-account {
                 display: flex;
@@ -214,8 +238,8 @@
 
 
             /* =====================================================
-                                   VISITANTE
-                                ====================================================== */
+                       VISITANTE
+                    ====================================================== */
 
             .btn-login,
             .btn-register {
@@ -256,8 +280,8 @@
 
 
             /* =====================================================
-                                   USUÁRIO LOGADO
-                                ====================================================== */
+                       USUÁRIO LOGADO
+                    ====================================================== */
 
             .user-info {
                 display: flex;
@@ -304,8 +328,8 @@
 
 
             /* =====================================================
-                                   ADMIN
-                                ====================================================== */
+                       ADMIN
+                    ====================================================== */
 
             .admin-link {
                 display: inline-flex;
@@ -330,8 +354,8 @@
 
 
             /* =====================================================
-                                   SAIR
-                                ====================================================== */
+                       SAIR
+                    ====================================================== */
 
             .logout-form {
                 margin: 0;
@@ -356,8 +380,8 @@
 
 
             /* =====================================================
-                                   CONTEÚDO
-                                ====================================================== */
+                       CONTEÚDO
+                    ====================================================== */
 
             .chefe-main {
                 min-height: calc(100vh - 230px);
@@ -365,8 +389,8 @@
 
 
             /* =====================================================
-                                   RODAPÉ NOVO
-                                ====================================================== */
+                       RODAPÉ NOVO
+                    ====================================================== */
 
             .chefe-footer {
                 width: 100%;
@@ -417,8 +441,8 @@
 
 
             /* =====================================================
-                                   TABLET
-                                ====================================================== */
+                       TABLET
+                    ====================================================== */
 
             @@media(max-width: 950px) {
 
@@ -437,20 +461,48 @@
 
 
             /* =====================================================
-                                   CELULAR
-                                ====================================================== */
+                       CELULAR
+                    ====================================================== */
 
             @@media(max-width: 720px) {
 
                 .chefe-nav {
+                    position: relative;
                     width: calc(100% - 24px);
                     min-height: 68px;
-                    grid-template-columns: 1fr auto;
-                    gap: 10px;
+                    grid-template-columns: 1fr auto auto;
+                    gap: 8px;
+                }
+
+                .mobile-menu-button {
+                    display: inline-flex;
                 }
 
                 .chefe-menu {
                     display: none;
+                    position: absolute;
+                    top: calc(100% + 8px);
+                    left: 0;
+                    right: 0;
+                    z-index: 1100;
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 4px;
+                    padding: 10px;
+                    border: 1px solid #eaded4;
+                    border-radius: 16px;
+                    background: #fffdf9;
+                    box-shadow: 0 16px 34px rgba(52, 31, 18, .14);
+                }
+
+                .chefe-menu.is-open {
+                    display: flex;
+                }
+
+                .chefe-menu a {
+                    justify-content: flex-start;
+                    width: 100%;
+                    padding: 13px 14px;
                 }
 
                 .chefe-logo-icon {
@@ -521,8 +573,8 @@
 
 
             /* =====================================================
-                                   CELULAR PEQUENO
-                                ====================================================== */
+                       CELULAR PEQUENO
+                    ====================================================== */
 
             @@media(max-width: 440px) {
 
@@ -591,7 +643,7 @@
 
             <!-- MENU -->
 
-            <div class="chefe-menu">
+            <div class="chefe-menu" id="chefeMenu">
 
                 <a asp-controller="Home"
                    asp-action="Index">
@@ -630,6 +682,16 @@
                 </a>
 
             </div>
+
+
+            <button type="button"
+                    class="mobile-menu-button"
+                    id="mobileMenuButton"
+                    aria-label="Abrir menu"
+                    aria-controls="chefeMenu"
+                    aria-expanded="false">
+                ☰
+            </button>
 
 
 
@@ -811,6 +873,54 @@
 
     <script src="~/js/site.js"
             asp-append-version="true">
+    </script>
+
+
+    <script>
+        (() => {
+            const button = document.getElementById("mobileMenuButton");
+            const menu = document.getElementById("chefeMenu");
+
+            if (!button || !menu) {
+                return;
+            }
+
+            const closeMenu = () => {
+                menu.classList.remove("is-open");
+                button.setAttribute("aria-expanded", "false");
+                button.textContent = "☰";
+            };
+
+            button.addEventListener("click", () => {
+                const opened = menu.classList.toggle("is-open");
+
+                button.setAttribute(
+                    "aria-expanded",
+                    opened ? "true" : "false"
+                );
+
+                button.textContent = opened ? "✕" : "☰";
+            });
+
+            menu.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", closeMenu);
+            });
+
+            document.addEventListener("click", event => {
+                if (
+                    !menu.contains(event.target) &&
+                    !button.contains(event.target)
+                ) {
+                    closeMenu();
+                }
+            });
+
+            window.addEventListener("resize", () => {
+                if (window.innerWidth > 720) {
+                    closeMenu();
+                }
+            });
+        })();
     </script>
 
 
