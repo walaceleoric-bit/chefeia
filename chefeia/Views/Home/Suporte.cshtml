@@ -1,0 +1,241 @@
+﻿@{
+    ViewData["Title"] = "Suporte";
+}
+
+<style>
+    .support-page {
+        min-height: calc(100vh - 220px);
+        padding: 70px 20px;
+        background:
+            radial-gradient(circle at top left, rgba(245, 102, 27, .10), transparent 30%),
+            linear-gradient(180deg, #fffdf9 0%, #fff8f1 100%);
+    }
+
+    .support-container {
+        width: min(920px, 100%);
+        margin: 0 auto;
+    }
+
+    .support-hero {
+        text-align: center;
+        margin-bottom: 38px;
+    }
+
+    .support-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 1px solid #ecd7c7;
+        border-radius: 999px;
+        background: #fff;
+        color: #5c4a3f;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .support-hero h1 {
+        margin: 20px 0 12px;
+        color: #2b170d;
+        font-size: clamp(38px, 6vw, 60px);
+        font-weight: 900;
+        letter-spacing: -2px;
+    }
+
+    .support-hero h1 span {
+        color: #f5661b;
+    }
+
+    .support-hero p {
+        width: min(680px, 100%);
+        margin: 0 auto;
+        color: #765f51;
+        font-size: 17px;
+        line-height: 1.8;
+    }
+
+    .support-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .support-card {
+        padding: 30px;
+        border: 1px solid #eaded4;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: 0 14px 40px rgba(64, 37, 20, .06);
+    }
+
+    .support-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        border-radius: 14px;
+        background: #fff0e5;
+        font-size: 23px;
+    }
+
+    .support-card h2 {
+        margin: 0 0 10px;
+        color: #2b170d;
+        font-size: 19px;
+        font-weight: 900;
+    }
+
+    .support-card p {
+        margin: 0;
+        color: #7b685b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .support-note {
+        margin-top: 20px;
+        padding: 30px;
+        border-radius: 20px;
+        border: 1px solid #ccebd7;
+        background: #f2fff6;
+        text-align: center;
+    }
+
+    .support-note strong {
+        display: block;
+        margin-bottom: 7px;
+        color: #187c42;
+        font-size: 17px;
+    }
+
+    .support-note span {
+        display: block;
+        color: #5f7165;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .whatsapp-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        min-height: 48px;
+        margin-top: 18px;
+        padding: 12px 22px;
+        border-radius: 13px;
+        background: #25D366;
+        color: #fff;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 900;
+        box-shadow: 0 10px 24px rgba(37, 211, 102, .22);
+        transition: transform .15s ease, background .15s ease;
+    }
+
+    .whatsapp-button:hover {
+        background: #1fbd5b;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    @@media (max-width: 720px) {
+        .support-page {
+            padding: 45px 16px;
+        }
+
+        .support-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .whatsapp-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<section class="support-page">
+    <div class="support-container">
+
+        <div class="support-hero">
+            <span class="support-badge">💬 Central de suporte</span>
+
+            <h1>
+                Como podemos <span>ajudar?</span>
+            </h1>
+
+            <p>
+                Se você tiver alguma dúvida, problema com sua conta,
+                assinatura ou uso do Chefe IA, estamos aqui para ajudar.
+            </p>
+        </div>
+
+        <div class="support-grid">
+
+            <article class="support-card">
+                <div class="support-icon">👤</div>
+
+                <h2>Conta e acesso</h2>
+
+                <p>
+                    Problemas para entrar, dúvidas sobre cadastro,
+                    senha ou informações da sua conta.
+                </p>
+            </article>
+
+            <article class="support-card">
+                <div class="support-icon">👑</div>
+
+                <h2>Plano Premium</h2>
+
+                <p>
+                    Dúvidas sobre assinatura, cobrança,
+                    benefícios do plano ou alterações no acesso Premium.
+                </p>
+            </article>
+
+            <article class="support-card">
+                <div class="support-icon">🤖</div>
+
+                <h2>Receitas e IA</h2>
+
+                <p>
+                    Caso encontre algum comportamento inesperado
+                    na geração de receitas, você pode entrar em contato conosco.
+                </p>
+            </article>
+
+            <article class="support-card">
+                <div class="support-icon">🔧</div>
+
+                <h2>Problemas técnicos</h2>
+
+                <p>
+                    Erros de página, falhas no sistema ou qualquer problema
+                    que impeça o uso normal do Chefe IA.
+                </p>
+            </article>
+
+        </div>
+
+        <div class="support-note">
+            <strong>💬 Atendimento pelo WhatsApp</strong>
+
+            <span>
+                Fale diretamente com o suporte do Chefe IA.
+            </span>
+
+            <a class="whatsapp-button"
+               href="https://wa.me/5527988433016?text=Ol%C3%A1%2C%20preciso%20de%20ajuda%20com%20o%20Chefe%20IA."
+               target="_blank"
+               rel="noopener noreferrer">
+
+                💬 Falar com o suporte
+
+            </a>
+        </div>
+
+    </div>
+</section>

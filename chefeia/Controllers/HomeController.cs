@@ -42,6 +42,16 @@ namespace chefeia.Controllers
             return View(model);
         }
 
+        public IActionResult SobreNos()
+        {
+            return View();
+        }
+
+        public IActionResult Suporte()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

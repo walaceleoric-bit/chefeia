@@ -1,0 +1,195 @@
+﻿@{
+    ViewData["Title"] = "Sobre nós";
+}
+
+<style>
+    .info-page {
+        min-height: calc(100vh - 220px);
+        padding: 70px 20px;
+        background:
+            radial-gradient(circle at top right, rgba(245, 102, 27, .10), transparent 28%),
+            linear-gradient(180deg, #fffdf9 0%, #fff8f1 100%);
+    }
+
+    .info-container {
+        width: min(980px, 100%);
+        margin: 0 auto;
+    }
+
+    .info-hero {
+        text-align: center;
+        margin-bottom: 42px;
+    }
+
+    .info-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 1px solid #ecd7c7;
+        border-radius: 999px;
+        background: #fff;
+        color: #5c4a3f;
+        font-size: 12px;
+        font-weight: 900;
+    }
+
+    .info-hero h1 {
+        margin: 20px 0 14px;
+        color: #2b170d;
+        font-size: clamp(38px, 6vw, 64px);
+        font-weight: 900;
+        letter-spacing: -2px;
+    }
+
+    .info-hero h1 span {
+        color: #f5661b;
+    }
+
+    .info-hero p {
+        width: min(720px, 100%);
+        margin: 0 auto;
+        color: #765f51;
+        font-size: 17px;
+        line-height: 1.8;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        margin-top: 36px;
+    }
+
+    .info-card {
+        padding: 28px;
+        border: 1px solid #eaded4;
+        border-radius: 22px;
+        background: rgba(255, 255, 255, .92);
+        box-shadow: 0 14px 40px rgba(64, 37, 20, .06);
+    }
+
+    .info-icon {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 18px;
+        border-radius: 14px;
+        background: #fff0e5;
+        font-size: 22px;
+    }
+
+    .info-card h2 {
+        margin: 0 0 10px;
+        color: #2b170d;
+        font-size: 18px;
+        font-weight: 900;
+    }
+
+    .info-card p {
+        margin: 0;
+        color: #7b685b;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .info-highlight {
+        margin-top: 20px;
+        padding: 34px;
+        border-radius: 24px;
+        background: #2b170d;
+        color: #fff;
+        text-align: center;
+    }
+
+    .info-highlight h2 {
+        margin: 0 0 10px;
+        font-size: 24px;
+        font-weight: 900;
+    }
+
+    .info-highlight p {
+        margin: 0;
+        color: rgba(255,255,255,.78);
+        line-height: 1.7;
+    }
+
+    @@media (max-width: 760px) {
+        .info-page {
+            padding: 45px 16px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<section class="info-page">
+    <div class="info-container">
+
+        <div class="info-hero">
+            <span class="info-badge">👨‍🍳 Conheça o Chefe IA</span>
+
+            <h1>
+                Cozinhar ficou mais <span>inteligente</span>.
+            </h1>
+
+            <p>
+                O Chefe IA nasceu para transformar os ingredientes que você já tem em casa
+                em receitas práticas, personalizadas e fáceis de preparar.
+                Nossa proposta é reduzir dúvidas, evitar desperdícios e tornar a cozinha
+                mais simples no dia a dia.
+            </p>
+        </div>
+
+        <div class="info-grid">
+
+            <article class="info-card">
+                <div class="info-icon">🥕</div>
+
+                <h2>Use o que você já tem</h2>
+
+                <p>
+                    Informe seus ingredientes e deixe o Chefe IA encontrar uma combinação
+                    que faça sentido para sua refeição.
+                </p>
+            </article>
+
+            <article class="info-card">
+                <div class="info-icon">✨</div>
+
+                <h2>Receitas personalizadas</h2>
+
+                <p>
+                    Cada consulta considera os ingredientes, a preferência escolhida
+                    e a quantidade de porções desejada.
+                </p>
+            </article>
+
+            <article class="info-card">
+                <div class="info-icon">⏱️</div>
+
+                <h2>Praticidade no dia a dia</h2>
+
+                <p>
+                    Menos tempo pensando no que cozinhar e mais facilidade para transformar
+                    ingredientes simples em uma refeição completa.
+                </p>
+            </article>
+
+        </div>
+
+        <div class="info-highlight">
+            <h2>Chefe IA</h2>
+
+            <p>
+                Tecnologia criada para ajudar pessoas reais a cozinhar melhor,
+                com mais criatividade e menos desperdício.
+            </p>
+        </div>
+
+    </div>
+</section>

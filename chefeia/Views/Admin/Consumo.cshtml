@@ -529,18 +529,24 @@
         </h2>
 
         <p>
-            Controle mensal da franquia usada pelo Chefe IA.
+            Limites e consumo detectados automaticamente pela RapidAPI.
         </p>
 
 
         <div class="rapid-grid">
 
-            <!-- CONTROLE INTERNO -->
+            <!-- CONTROLE AUTOMÁTICO -->
 
             <div class="rapid-card rapid-interno">
 
                 <div class="rapid-card-title">
-                    Controle mensal de requests
+                    Controle automático de requests
+                </div>
+
+                <div class="detalhe" style="margin-top:6px;color:rgba(255,255,255,.55);">
+                    @(Model.RapidApiLimitsFromProvider
+                        ? "Valores reais informados pelo provedor"
+                        : "Fallback baseado na configuração interna")
                 </div>
 
                 <div class="rapid-numbers">

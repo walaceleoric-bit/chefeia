@@ -1,11 +1,12 @@
 ﻿using chefeia.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace chefeia.Data
 {
     public class AppDbContext
-        : IdentityDbContext<AppUser>
+        : IdentityDbContext<AppUser>, IDataProtectionKeyContext
     {
         public AppDbContext(
             DbContextOptions<AppDbContext> options)
@@ -29,6 +30,8 @@ namespace chefeia.Data
         public DbSet<UserSubscription> UserSubscriptions { get; set; }
 
         public DbSet<AsaasWebhookEvent> AsaasWebhookEvents { get; set; }
+
+        public DbSet<DataProtectionKey> DataProtectionKeys { get; set; }
 
 
         // =====================================================

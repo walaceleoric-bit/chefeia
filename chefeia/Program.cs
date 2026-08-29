@@ -3,6 +3,7 @@ using chefeia.Models;
 using chefeia.Services;
 using chefeia.Services.AI;
 using chefeia.Services.Asaas;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,6 +44,21 @@ builder.Services.AddDbContext<AppDbContext>(
         );
     }
 );
+
+
+// =====================================================
+// DATA PROTECTION
+// =====================================================
+//
+// Persiste as chaves no PostgreSQL.
+// Isso mantém cookies, antiforgery e tokens válidos
+// após reinícios e novos deploys no Railway.
+// =====================================================
+
+builder.Services
+    .AddDataProtection()
+    .PersistKeysToDbContext<AppDbContext>()
+    .SetApplicationName("ChefeIA");
 
 
 // =====================================================

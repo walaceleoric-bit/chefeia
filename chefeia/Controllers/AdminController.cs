@@ -943,13 +943,17 @@ namespace chefeia.Controllers
 
 
             // =====================================================
-            // CONFIGURAÇÕES DA RAPIDAPI
+            // CONFIGURAÇÃO DE FALLBACK
+            // =====================================================
+            //
+            // O valor configurado manualmente só será usado quando
+            // o provedor não informar os limites nos headers.
             // =====================================================
 
             var settings =
                 await _siteSettingsService.ObterAsync();
 
-            var rapidApiMonthlyRequestLimit =
+            var limiteRequestsFallback =
                 Math.Max(
                     settings.RapidApiMonthlyRequestLimit,
                     0);
@@ -1004,17 +1008,73 @@ namespace chefeia.Controllers
 
 
             // =====================================================
-            // CONTROLE INTERNO DA RAPIDAPI
+            // LIMITES INFORMADOS PELA PRÓPRIA API
             // =====================================================
 
-            var rapidApiRequestsUsed =
-                consultasMes;
+            var ultimoComLimites =
+                await _dbContext.AiUsages
+                    .AsNoTracking()
+                    .Where(
+                        x =>
+                            x.RequestsLimit != null ||
+                            x.RequestsRemaining != null ||
+                            x.CreditLimit != null ||
+                            x.CreditRemaining != null)
+                    .OrderByDescending(
+                        x => x.CreatedAt)
+                    .FirstOrDefaultAsync();
 
-            var rapidApiRequestsRemaining =
-                Math.Max(
-                    rapidApiMonthlyRequestLimit -
-                    rapidApiRequestsUsed,
-                    0);
+
+            // =====================================================
+            // CONTROLE AUTOMÁTICO DA RAPIDAPI
+            // =====================================================
+            //
+            // Prioridade:
+            // 1. Usa os valores reais retornados pelo provedor.
+            // 2. Se o provedor não informar, usa a configuração
+            //    manual apenas como fallback.
+            // =====================================================
+
+            var possuiRequestsDoProvider =
+                ultimoComLimites?.RequestsLimit is > 0 &&
+                ultimoComLimites.RequestsRemaining.HasValue;
+
+            int rapidApiMonthlyRequestLimit;
+            int rapidApiRequestsRemaining;
+            int rapidApiRequestsUsed;
+
+            if (possuiRequestsDoProvider)
+            {
+                rapidApiMonthlyRequestLimit =
+                    ultimoComLimites!.RequestsLimit!.Value;
+
+                rapidApiRequestsRemaining =
+                    Math.Clamp(
+                        ultimoComLimites.RequestsRemaining!.Value,
+                        0,
+                        rapidApiMonthlyRequestLimit);
+
+                rapidApiRequestsUsed =
+                    Math.Max(
+                        rapidApiMonthlyRequestLimit -
+                        rapidApiRequestsRemaining,
+                        0);
+            }
+            else
+            {
+                rapidApiMonthlyRequestLimit =
+                    limiteRequestsFallback;
+
+                rapidApiRequestsUsed =
+                    consultasMes;
+
+                rapidApiRequestsRemaining =
+                    Math.Max(
+                        rapidApiMonthlyRequestLimit -
+                        rapidApiRequestsUsed,
+                        0);
+            }
+
 
             double rapidApiRequestsPercentUsed = 0;
 
@@ -1068,24 +1128,6 @@ namespace chefeia.Controllers
 
 
             // =====================================================
-            // LIMITES INFORMADOS PELA PRÓPRIA API
-            // =====================================================
-
-            var ultimoComLimites =
-                await _dbContext.AiUsages
-                    .AsNoTracking()
-                    .Where(
-                        x =>
-                            x.RequestsLimit != null ||
-                            x.RequestsRemaining != null ||
-                            x.CreditLimit != null ||
-                            x.CreditRemaining != null)
-                    .OrderByDescending(
-                        x => x.CreatedAt)
-                    .FirstOrDefaultAsync();
-
-
-            // =====================================================
             // ÚLTIMAS CONSULTAS
             // =====================================================
 
@@ -1134,6 +1176,9 @@ namespace chefeia.Controllers
 
                     RapidApiRequestsPercentUsed =
                         rapidApiRequestsPercentUsed,
+
+                    RapidApiLimitsFromProvider =
+                        possuiRequestsDoProvider,
 
                     RequestsLimit =
                         ultimoComLimites

@@ -308,6 +308,27 @@ namespace chefeia.Services.AI
     conteudoResposta);
 
 
+                // =================================================
+                // HEADERS / CONSUMO RAPIDAPI
+                // =================================================
+
+                foreach (var header in response.Headers)
+                {
+                    _logger.LogInformation(
+                        "RAPIDAPI HEADER: {Nome} = {Valor}",
+                        header.Key,
+                        string.Join(", ", header.Value));
+                }
+
+                foreach (var header in response.Content.Headers)
+                {
+                    _logger.LogInformation(
+                        "RAPIDAPI CONTENT HEADER: {Nome} = {Valor}",
+                        header.Key,
+                        string.Join(", ", header.Value));
+                }
+
+
                 consumo.StatusCode =
                     (int)response.StatusCode;
 
