@@ -313,6 +313,10 @@ namespace chefeia.Services.AI
                     await response.Content
                         .ReadAsStringAsync();
 
+                _logger.LogInformation(
+    "RESPOSTA BRUTA DA RAPIDAPI: {Resposta}",
+    conteudoResposta);
+
 
                 consumo.StatusCode =
                     (int)response.StatusCode;
