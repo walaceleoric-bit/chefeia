@@ -408,7 +408,8 @@ namespace chefeia.Services.AI
 
                 // =================================================
                 // LER RESPOSTA
-                // choices[0].message.content
+                // Nova API: result
+                // Compatibilidade: choices[0].message.content
                 // =================================================
 
                 using var documentoApi =
@@ -420,54 +421,64 @@ namespace chefeia.Services.AI
                     documentoApi.RootElement;
 
 
+                string? resultadoIA =
+                    null;
+
+
+                // Formato da API chatgpt-42:
+                // { "result": "...", "status": true, "server_code": 1 }
                 if (
-                    !TryGetPropertyIgnoreCase(
+                    TryGetPropertyIgnoreCase(
                         raizApi,
-                        "choices",
-                        out var choicesElement) ||
-                    choicesElement.ValueKind !=
-                        JsonValueKind.Array ||
-                    choicesElement.GetArrayLength() == 0)
+                        "result",
+                        out var resultElement) &&
+                    resultElement.ValueKind ==
+                        JsonValueKind.String)
                 {
-                    throw new InvalidOperationException(
-                        "A API não retornou nenhuma resposta.");
+                    resultadoIA =
+                        resultElement.GetString();
                 }
 
 
-                var primeiraEscolha =
-                    choicesElement[0];
-
-
-                if (
-                    !TryGetPropertyIgnoreCase(
-                        primeiraEscolha,
-                        "message",
-                        out var messageElement))
+                // Fallback para APIs compatíveis com OpenAI.
+                if (string.IsNullOrWhiteSpace(resultadoIA))
                 {
-                    throw new InvalidOperationException(
-                        "A API não retornou a mensagem da inteligência artificial.");
+                    if (
+                        TryGetPropertyIgnoreCase(
+                            raizApi,
+                            "choices",
+                            out var choicesElement) &&
+                        choicesElement.ValueKind ==
+                            JsonValueKind.Array &&
+                        choicesElement.GetArrayLength() > 0)
+                    {
+                        var primeiraEscolha =
+                            choicesElement[0];
+
+
+                        if (
+                            TryGetPropertyIgnoreCase(
+                                primeiraEscolha,
+                                "message",
+                                out var messageElement) &&
+                            TryGetPropertyIgnoreCase(
+                                messageElement,
+                                "content",
+                                out var contentElement) &&
+                            contentElement.ValueKind ==
+                                JsonValueKind.String)
+                        {
+                            resultadoIA =
+                                contentElement.GetString();
+                        }
+                    }
                 }
-
-
-                if (
-                    !TryGetPropertyIgnoreCase(
-                        messageElement,
-                        "content",
-                        out var contentElement))
-                {
-                    throw new InvalidOperationException(
-                        "A API não retornou o conteúdo da resposta.");
-                }
-
-
-                var resultadoIA =
-                    contentElement.GetString();
 
 
                 if (string.IsNullOrWhiteSpace(resultadoIA))
                 {
                     throw new InvalidOperationException(
-                        "A inteligência artificial retornou uma resposta vazia.");
+                        "A API não retornou um resultado válido.");
                 }
 
 
@@ -1503,236 +1514,31 @@ namespace chefeia.Services.AI
             var prompt =
                 new StringBuilder();
 
-
-            prompt.AppendLine(
-                "Você é o Chefe IA, um chef virtual criterioso, responsável e exigente com coerência culinária.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "INGREDIENTES INFORMADOS PELO USUÁRIO:");
-
-            prompt.AppendLine(
-                ingredientes);
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "PREFERÊNCIA:");
-
-            prompt.AppendLine(
-                preferencia);
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "PORÇÕES:");
-
-            prompt.AppendLine(
-                porcoes.ToString());
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "Antes de gerar qualquer receita, avalie se TODOS os ingredientes informados podem participar de uma preparação coerente.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "REGRAS OBRIGATÓRIAS:");
-
-            prompt.AppendLine(
-                "1. Não crie uma receita apenas para responder ao usuário.");
-
-            prompt.AppendLine(
-                "2. Use todos os ingredientes informados pelo usuário sempre que houver uma forma culinariamente coerente de utilizá-los.");
-
-            prompt.AppendLine(
-                "3. Não ignore silenciosamente nenhum ingrediente informado.");
-
-            prompt.AppendLine(
-                "4. Se algum ingrediente informado não combinar com a preparação, use SUGESTAO ou INSUFICIENTE e explique isso na mensagem.");
-
-            prompt.AppendLine(
-                "5. Não invente ingredientes principais que não foram informados.");
-
-            prompt.AppendLine(
-                "6. Não adicione ingredientes extras usando expressões como 'se disponível', 'opcional', 'caso tenha' ou semelhantes.");
-
-            prompt.AppendLine(
-                "7. Se o usuário não informou alho, cebola, limão, vinagre, queijo, leite, ovos, farinha, carnes, arroz, massas, legumes ou outros alimentos, não coloque esses itens na receita.");
-
-            prompt.AppendLine(
-                "8. Os únicos itens que podem ser assumidos automaticamente são: água, sal, óleo, azeite, manteiga e temperos secos simples.");
-
-            prompt.AppendLine(
-                "9. Mesmo os itens básicos só devem ser usados quando fizerem sentido para a preparação.");
-
-            prompt.AppendLine(
-                "10. Não substitua um ingrediente informado por outro.");
-
-            prompt.AppendLine(
-                "11. Não transforme ingredientes informados em simples decoração para fingir que foram utilizados.");
-
-            prompt.AppendLine(
-                "12. A receita deve realmente aproveitar os ingredientes fornecidos.");
-
-            prompt.AppendLine(
-                "13. Respeite rigorosamente a preferência escolhida pelo usuário.");
-
-            prompt.AppendLine(
-                "14. Se a preferência não puder ser atendida com os ingredientes informados, não ignore a preferência. Use SUGESTAO ou INSUFICIENTE.");
-
-            prompt.AppendLine(
-                "15. Não faça combinações estranhas, artificiais ou pouco apetitosas apenas para usar todos os ingredientes.");
-
-            prompt.AppendLine(
-                "16. Se usar todos os ingredientes gerar uma receita ruim, não gere a receita.");
-
-            prompt.AppendLine(
-                "17. Quando não houver uma boa receita, dê uma opinião clara, educada e útil.");
-
-            prompt.AppendLine(
-                "18. Nas sugestões, informe quais ingredientes adicionais poderiam tornar a preparação coerente.");
-
-            prompt.AppendLine(
-                "19. Nunca afirme que o usuário possui um ingrediente que ele não informou.");
-
-            prompt.AppendLine(
-                "20. Use bom senso culinário como um chef profissional.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "DECISÃO:");
-
-            prompt.AppendLine(
-                "Use RECEITA somente quando existir uma preparação coerente, prática e recomendável com os ingredientes informados.");
-
             prompt.AppendLine(
-                "Use SUGESTAO quando existir uma boa ideia, mas faltar algum ingrediente importante ou quando algum ingrediente informado não combinar bem.");
+                "Você é o Chefe IA. Crie uma receita prática com os ingredientes disponíveis. Responda somente em JSON válido, sem Markdown.");
 
-            prompt.AppendLine(
-                "Use INSUFICIENTE quando não houver uma preparação culinária razoável.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "IMPORTANTE SOBRE RECEITA:");
-
-            prompt.AppendLine(
-                "Se tipoResposta for RECEITA, a lista de ingredientes deve conter os ingredientes fornecidos pelo usuário que foram utilizados.");
-
-            prompt.AppendLine(
-                "Não inclua ingredientes extras fora da lista de básicos permitidos.");
-
-            prompt.AppendLine(
-                "Não escreva 'se disponível' ou 'opcional' para alimentos que não foram informados.");
-
-            prompt.AppendLine(
-                "Os passos devem corresponder exatamente aos ingredientes listados.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "IMPORTANTE SOBRE SUGESTAO OU INSUFICIENTE:");
-
-            prompt.AppendLine(
-                "Não gere nome de receita, ingredientes ou passos.");
-
-            prompt.AppendLine(
-                "Explique claramente o motivo em mensagem.");
-
-            prompt.AppendLine(
-                "Forneça de 1 a 5 sugestões úteis.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "FORMATO:");
-
-            prompt.AppendLine(
-                "Responda SOMENTE com JSON válido.");
-
-            prompt.AppendLine(
-                "Não use Markdown.");
-
-            prompt.AppendLine(
-                "Não use bloco de código.");
-
-            prompt.AppendLine(
-                "Não escreva texto fora do JSON.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "Ingredientes e passos DEVEM ser listas de textos simples.");
-
-            prompt.AppendLine(
-                "Não use objetos dentro das listas.");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "Exemplo de ingredientes:");
-
-            prompt.AppendLine(
-                "[\"500 g de carne moída\", \"4 batatas\", \"2 xícaras de arroz\"]");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "Exemplo de passos:");
-
-            prompt.AppendLine(
-                "[\"Cozinhe as batatas.\", \"Prepare a carne.\"]");
-
-            prompt.AppendLine();
-
-            prompt.AppendLine(
-                "JSON OBRIGATÓRIO:");
-
-            prompt.AppendLine(
-                "{");
-
-            prompt.AppendLine(
-                "  \"tipoResposta\": \"RECEITA\",");
-
-            prompt.AppendLine(
-                "  \"mensagem\": \"\",");
-
-            prompt.AppendLine(
-                "  \"sugestoes\": [],");
-
-            prompt.AppendLine(
-                "  \"nome\": \"\",");
+            prompt.AppendLine($"Ingredientes disponíveis: {ingredientes}");
+            prompt.AppendLine($"Preferência: {preferencia}");
+            prompt.AppendLine($"Porções: {porcoes}");
 
             prompt.AppendLine(
-                "  \"descricao\": \"\",");
+                "Regras: escolha entre os ingredientes informados apenas os que formam uma boa receita; pode ignorar os que não combinarem ou não forem necessários. " +
+                "Não invente alimentos. Pode assumir somente água, sal, óleo, azeite, manteiga e temperos secos simples. " +
+                "Alho, cebola, leite, ovos, queijo, farinha, molhos e outros alimentos só podem ser usados se tiverem sido informados. " +
+                "Respeite a preferência e não force combinações ruins. " +
+                "Use SUGESTAO se faltar algo indispensável para uma preparação funcionar e INSUFICIENTE se não houver preparação culinária razoável.");
 
             prompt.AppendLine(
-                "  \"pais\": \"\",");
+                "Em RECEITA: ingredientes e passos devem usar somente ingredientes informados selecionados e os básicos permitidos, " +
+                "com quantidades adequadas às porções. Não inclua itens opcionais ou não informados.");
 
             prompt.AppendLine(
-                "  \"categoria\": \"\",");
+                "Em SUGESTAO ou INSUFICIENTE: deixe nome, descricao, pais, categoria, ingredientes e passos vazios; " +
+                "explique brevemente em mensagem e forneça de 1 a 5 sugestoes úteis.");
 
             prompt.AppendLine(
-                "  \"porcoes\": " +
-                porcoes +
-                ",");
-
-            prompt.AppendLine(
-                "  \"tempoMinutos\": 0,");
-
-            prompt.AppendLine(
-                "  \"ingredientes\": [],");
-
-            prompt.AppendLine(
-                "  \"passos\": []");
-
-            prompt.AppendLine(
-                "}");
-
+                $"Retorne exatamente: " +
+                $"{{\"tipoResposta\":\"RECEITA|SUGESTAO|INSUFICIENTE\",\"mensagem\":\"\",\"sugestoes\":[],\"nome\":\"\",\"descricao\":\"\",\"pais\":\"\",\"categoria\":\"\",\"porcoes\":{porcoes},\"tempoMinutos\":0,\"ingredientes\":[],\"passos\":[]}}");
 
             return prompt.ToString();
         }
